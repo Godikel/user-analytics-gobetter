@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   BookOpen,
@@ -14,18 +15,26 @@ import {
 import { useState } from "react";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Overview", active: true },
-  { icon: BookOpen, label: "Courses", color: "text-courses" },
-  { icon: ClipboardCheck, label: "Assessments", color: "text-assessments" },
-  { icon: MessageSquare, label: "Surveys", color: "text-surveys" },
-  { icon: Route, label: "Journeys", color: "text-journeys" },
-  { icon: Video, label: "Live Classes", color: "text-live-classes" },
-  { icon: Rss, label: "Feeds", color: "text-feeds" },
-  { icon: Users, label: "Users" },
+  { icon: Users, label: "Users", path: "/users" },
+  { icon: LayoutDashboard, label: "Analytics", path: "/analytics" },
+  { icon: BookOpen, label: "Courses", path: "#", color: "text-courses" },
+  { icon: ClipboardCheck, label: "Assessments", path: "#", color: "text-assessments" },
+  { icon: MessageSquare, label: "Surveys", path: "#", color: "text-surveys" },
+  { icon: Route, label: "Journeys", path: "#", color: "text-journeys" },
+  { icon: Video, label: "Live Classes", path: "#", color: "text-live-classes" },
+  { icon: Rss, label: "Feeds", path: "#", color: "text-feeds" },
 ];
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
+
+  const isActive = (path: string) => {
+    if (path === "/users") {
+      return location.pathname === "/" || location.pathname.startsWith("/users");
+    }
+    return location.pathname === path;
+  };
 
   return (
     <aside
@@ -61,21 +70,22 @@ export function Sidebar() {
 
       <nav className="flex-1 p-2 space-y-1">
         {navItems.map((item) => (
-          <button
+          <Link
             key={item.label}
+            to={item.path}
             className={cn(
               "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all",
-              item.active
+              isActive(item.path)
                 ? "bg-sidebar-primary text-sidebar-primary-foreground"
                 : "text-sidebar-foreground hover:bg-sidebar-accent",
               collapsed && "justify-center px-2"
             )}
           >
             <item.icon
-              className={cn("w-5 h-5 flex-shrink-0", item.color && !item.active && item.color)}
+              className={cn("w-5 h-5 flex-shrink-0", item.color && !isActive(item.path) && item.color)}
             />
             {!collapsed && <span className="text-sm font-medium">{item.label}</span>}
-          </button>
+          </Link>
         ))}
       </nav>
 
