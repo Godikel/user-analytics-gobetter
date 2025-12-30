@@ -1,5 +1,4 @@
 import { useParams, Link } from "react-router-dom";
-import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { UserProfileHeader } from "@/components/user/UserProfileHeader";
 import { ModuleStatsGrid } from "@/components/user/ModuleStatsGrid";
@@ -15,33 +14,28 @@ const UserAnalytics = () => {
 
   if (!user) {
     return (
-      <div className="flex h-screen overflow-hidden">
-        <Sidebar />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <Header />
-          <main className="flex-1 overflow-y-auto p-6 flex items-center justify-center">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2">User Not Found</h2>
-              <p className="text-muted-foreground mb-4">The user you're looking for doesn't exist.</p>
-              <Link to="/users">
-                <Button>
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Users
-                </Button>
-              </Link>
-            </div>
-          </main>
-        </div>
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="p-6 flex items-center justify-center min-h-[calc(100vh-64px)]">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-2">User Not Found</h2>
+            <p className="text-muted-foreground mb-4">The user you're looking for doesn't exist.</p>
+            <Link to="/users">
+              <Button>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Users
+              </Button>
+            </Link>
+          </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
-        <main className="flex-1 overflow-y-auto p-6 space-y-6">
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="p-6 space-y-6 max-w-7xl mx-auto">
           {/* Breadcrumb & Actions */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -113,8 +107,7 @@ const UserAnalytics = () => {
               <UserModulesTable />
             </TabsContent>
           </Tabs>
-        </main>
-      </div>
+      </main>
     </div>
   );
 };

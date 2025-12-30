@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { users } from "@/data/users";
-import { Search, MapPin, Phone, Mail, Clock, Users } from "lucide-react";
+import { Search, MapPin, Mail, Clock, Users } from "lucide-react";
 
 const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -52,11 +51,9 @@ const UserManagement = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
-        <main className="flex-1 overflow-y-auto p-6 space-y-6">
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="p-6 space-y-6 max-w-7xl mx-auto">
           {/* Page Header */}
           <div className="flex flex-col gap-4">
             <div>
@@ -174,8 +171,7 @@ const UserManagement = () => {
               </Link>
             ))}
           </div>
-        </main>
-      </div>
+      </main>
     </div>
   );
 };

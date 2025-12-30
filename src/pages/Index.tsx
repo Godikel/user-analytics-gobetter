@@ -1,4 +1,3 @@
-import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { MetricCard } from "@/components/analytics/MetricCard";
 import { EngagementChart } from "@/components/analytics/EngagementChart";
@@ -21,11 +20,9 @@ import {
 
 const Index = () => {
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
-        <main className="flex-1 overflow-y-auto p-6 space-y-6">
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="p-6 space-y-6 max-w-7xl mx-auto">
           {/* Page Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
@@ -120,8 +117,7 @@ const Index = () => {
             <SurveyInsights />
             <FeedEngagement />
           </div>
-        </main>
-      </div>
+      </main>
     </div>
   );
 };
