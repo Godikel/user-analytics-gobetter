@@ -89,12 +89,15 @@ function generateTimeSpent(): string {
   return `${hours} hrs ${mins} mins ${secs} secs`;
 }
 
-function generateDate(startYear: number, endYear: number): string {
+function generateDateTime(startYear: number, endYear: number): string {
   const year = startYear + Math.floor(Math.random() * (endYear - startYear + 1));
   const month = Math.floor(Math.random() * 12) + 1;
   const day = Math.floor(Math.random() * 28) + 1;
+  const hours = Math.floor(Math.random() * 12) + 1;
+  const mins = Math.floor(Math.random() * 60);
+  const ampm = Math.random() > 0.5 ? "AM" : "PM";
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  return `${day} ${months[month - 1]} ${year}`;
+  return `${day} ${months[month - 1]} ${year}, ${hours}:${mins.toString().padStart(2, '0')} ${ampm}`;
 }
 
 function generateModules(): User["modules"] {
@@ -123,9 +126,9 @@ export const users: User[] = Array.from({ length: 50 }, (_, index) => {
     email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@company.com`,
     role: roles[index % roles.length],
     status: statuses[Math.floor(Math.random() * statuses.length)],
-    createdOn: generateDate(2023, 2024),
-    joiningDate: generateDate(2020, 2024),
-    lastActive: generateDate(2024, 2025),
+    createdOn: generateDateTime(2023, 2024),
+    joiningDate: generateDateTime(2020, 2024),
+    lastActive: generateDateTime(2024, 2025),
     timeSpent: generateTimeSpent(),
     location: locations[index % locations.length],
     referenceId: generateUUID(),

@@ -24,6 +24,14 @@ interface Module {
 }
 
 // Generate sample modules data
+const generateDateTime = (): string => {
+  const day = Math.floor(Math.random() * 28) + 1;
+  const hours = Math.floor(Math.random() * 12) + 1;
+  const mins = Math.floor(Math.random() * 60);
+  const ampm = Math.random() > 0.5 ? "AM" : "PM";
+  return `${day} Dec 2024, ${hours}:${mins.toString().padStart(2, '0')} ${ampm}`;
+};
+
 const generateModules = (count: number): Module[] => {
   const types: Module["type"][] = ["Course", "Assessment", "Survey", "Learning Journey", "ILT"];
   const statuses: Module["completionStatus"][] = ["Completed", "Ongoing", "Yet to Start"];
@@ -38,10 +46,10 @@ const generateModules = (count: number): Module[] => {
     id: `MOD${String(i + 1).padStart(4, '0')}`,
     name: names[i % names.length],
     type: types[i % types.length],
-    distributionDate: `${Math.floor(Math.random() * 28) + 1} Dec 2024`,
+    distributionDate: generateDateTime(),
     completionStatus: statuses[Math.floor(Math.random() * statuses.length)],
-    startDate: statuses[i % 3] === "Yet to Start" ? "Not Started" : `${Math.floor(Math.random() * 28) + 1} Dec 2024`,
-    completionDate: statuses[i % 3] === "Completed" ? `${Math.floor(Math.random() * 28) + 1} Dec 2024` : "Not Completed",
+    startDate: statuses[i % 3] === "Yet to Start" ? "Not Started" : generateDateTime(),
+    completionDate: statuses[i % 3] === "Completed" ? generateDateTime() : "Not Completed",
     trainer: trainers[i % trainers.length],
     coins: Math.floor(Math.random() * 100) + 10,
     feedbackRating: statuses[i % 3] === "Completed" ? Math.floor(Math.random() * 5) + 1 : null,
