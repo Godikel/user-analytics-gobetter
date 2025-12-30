@@ -1,3 +1,4 @@
+import { useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { UserProfileHeader } from "@/components/user/UserProfileHeader";
@@ -11,6 +12,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const UserAnalytics = () => {
   const { userId } = useParams<{ userId: string }>();
   const user = getUserById(userId || "");
+  const [activeTab, setActiveTab] = useState("modules");
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  const handleModuleClick = (tabValue: string) => {
+    setActiveTab(tabValue);
+    tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   if (!user) {
     return (
@@ -65,10 +73,10 @@ const UserAnalytics = () => {
           <UserProfileHeader user={user} />
 
           {/* Module Stats */}
-          <ModuleStatsGrid modules={user.modules} />
+          <ModuleStatsGrid modules={user.modules} onModuleClick={handleModuleClick} />
 
           {/* Tabs for Different Views */}
-          <Tabs defaultValue="modules" className="animate-slide-up" style={{ animationDelay: "150ms" }}>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="animate-slide-up" style={{ animationDelay: "150ms" }} ref={tabsRef}>
             <TabsList className="bg-secondary/50 border border-border">
               <TabsTrigger value="modules">All Modules</TabsTrigger>
               <TabsTrigger value="courses">Courses</TabsTrigger>
