@@ -13,7 +13,7 @@ interface Module {
   name: string;
   type: "Course" | "Assessment" | "Survey" | "Learning Journey" | "ILT";
   distributionDate: string;
-  completionStatus: "Completed" | "Ongoing" | "Yet to Start";
+  completionStatus: "Completed" | "Ongoing" | "Not Started";
   startDate: string;
   completionDate: string;
   trainer: string;
@@ -34,7 +34,7 @@ const generateDateTime = (): string => {
 
 const generateModules = (count: number): Module[] => {
   const types: Module["type"][] = ["Course", "Assessment", "Survey", "Learning Journey", "ILT"];
-  const statuses: Module["completionStatus"][] = ["Completed", "Ongoing", "Yet to Start"];
+  const statuses: Module["completionStatus"][] = ["Completed", "Ongoing", "Not Started"];
   const names = [
     "Leadership Fundamentals", "Data Analytics 101", "Project Management", "Communication Skills",
     "Strategic Thinking", "Team Collaboration", "Customer Focus", "Innovation Mindset",
@@ -48,8 +48,8 @@ const generateModules = (count: number): Module[] => {
     type: types[i % types.length],
     distributionDate: generateDateTime(),
     completionStatus: statuses[Math.floor(Math.random() * statuses.length)],
-    startDate: statuses[i % 3] === "Yet to Start" ? "Not Started" : generateDateTime(),
-    completionDate: statuses[i % 3] === "Completed" ? generateDateTime() : "Not Completed",
+    startDate: statuses[i % 3] === "Not Started" ? "-" : generateDateTime(),
+    completionDate: statuses[i % 3] === "Completed" ? generateDateTime() : "-",
     trainer: trainers[i % trainers.length],
     coins: Math.floor(Math.random() * 100) + 10,
     feedbackRating: statuses[i % 3] === "Completed" ? Math.floor(Math.random() * 5) + 1 : null,
@@ -81,7 +81,7 @@ export function UserModulesTable() {
     switch (status) {
       case "Completed": return "bg-live-classes/20 text-live-classes border-live-classes/30";
       case "Ongoing": return "bg-journeys/20 text-journeys border-journeys/30";
-      case "Yet to Start": return "bg-muted text-muted-foreground border-muted";
+      case "Not Started": return "bg-muted text-muted-foreground border-muted";
     }
   };
 
