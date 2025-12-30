@@ -5,18 +5,19 @@ import { cn } from "@/lib/utils";
 
 interface ModuleStatsGridProps {
   modules: User["modules"];
+  onModuleClick?: (tabValue: string) => void;
 }
 
 const moduleConfig = [
-  { key: "courses", label: "Courses", icon: BookOpen, colorClass: "text-courses border-courses/30 bg-courses/10" },
-  { key: "assessments", label: "Assessments", icon: ClipboardCheck, colorClass: "text-assessments border-assessments/30 bg-assessments/10" },
-  { key: "surveys", label: "Surveys", icon: MessageSquare, colorClass: "text-surveys border-surveys/30 bg-surveys/10" },
-  { key: "learningJourneys", label: "Learning Journeys", icon: Route, colorClass: "text-journeys border-journeys/30 bg-journeys/10" },
-  { key: "ilts", label: "ILTs", icon: Video, colorClass: "text-live-classes border-live-classes/30 bg-live-classes/10" },
-  { key: "feeds", label: "Feeds", icon: Newspaper, colorClass: "text-feeds border-feeds/30 bg-feeds/10" },
+  { key: "courses", tabValue: "courses", label: "Courses", icon: BookOpen, colorClass: "text-courses border-courses/30 bg-courses/10" },
+  { key: "assessments", tabValue: "assessments", label: "Assessments", icon: ClipboardCheck, colorClass: "text-assessments border-assessments/30 bg-assessments/10" },
+  { key: "surveys", tabValue: "surveys", label: "Surveys", icon: MessageSquare, colorClass: "text-surveys border-surveys/30 bg-surveys/10" },
+  { key: "learningJourneys", tabValue: "journeys", label: "Learning Journeys", icon: Route, colorClass: "text-journeys border-journeys/30 bg-journeys/10" },
+  { key: "ilts", tabValue: "ilts", label: "ILTs", icon: Video, colorClass: "text-live-classes border-live-classes/30 bg-live-classes/10" },
+  { key: "feeds", tabValue: "feeds", label: "Feeds", icon: Newspaper, colorClass: "text-feeds border-feeds/30 bg-feeds/10" },
 ];
 
-export function ModuleStatsGrid({ modules }: ModuleStatsGridProps) {
+export function ModuleStatsGrid({ modules, onModuleClick }: ModuleStatsGridProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 animate-slide-up" style={{ animationDelay: "100ms" }}>
       {moduleConfig.map((config, index) => {
@@ -29,6 +30,7 @@ export function ModuleStatsGrid({ modules }: ModuleStatsGridProps) {
         return (
           <Card 
             key={config.key}
+            onClick={() => onModuleClick?.(config.tabValue)}
             className={cn(
               "p-4 border-2 transition-all hover:scale-105 cursor-pointer",
               config.colorClass
