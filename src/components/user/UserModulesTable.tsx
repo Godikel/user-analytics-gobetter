@@ -109,69 +109,79 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
     <Card variant="elevated" className="animate-slide-up" style={{ animationDelay: "200ms" }}>
       <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <CardTitle className="text-lg">{title}</CardTitle>
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search modules..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-[200px] bg-secondary/50 border-border"
-            />
-          </div>
-          {showTypeColumn && (
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-[140px] bg-secondary/50 border-border">
-                <SelectValue placeholder="Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="Course">Course</SelectItem>
-                <SelectItem value="Assessment">Assessment</SelectItem>
-                <SelectItem value="Survey">Survey</SelectItem>
-                <SelectItem value="Learning Journey">Learning Journey</SelectItem>
-                <SelectItem value="ILT">ILT</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[140px] bg-secondary/50 border-border">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="Completed">Completed</SelectItem>
-              <SelectItem value="Ongoing">Ongoing</SelectItem>
-              <SelectItem value="Yet to Start">Yet to Start</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
-        </div>
+        <Button variant="outline" size="sm" className="gap-2">
+          <Download className="h-4 w-4" />
+          Export
+        </Button>
       </CardHeader>
       <CardContent>
-        <div className="rounded-lg border border-border overflow-hidden">
-          <Table>
+        <div className="rounded-lg border border-border overflow-x-auto">
+          <Table className="min-w-[900px]">
             <TableHeader>
               <TableRow className="bg-secondary/50 hover:bg-secondary/50">
-                {idColumnLabel && <TableHead className="font-semibold">{idColumnLabel}</TableHead>}
-                <TableHead className="font-semibold">Name</TableHead>
-                {showTypeColumn && <TableHead className="font-semibold">Type</TableHead>}
-                <TableHead className="font-semibold">Status</TableHead>
-                <TableHead className="font-semibold">Distribution</TableHead>
-                <TableHead className="font-semibold">Start</TableHead>
-                <TableHead className="font-semibold">Completion</TableHead>
-                <TableHead className="font-semibold">Trainer</TableHead>
-                <TableHead className="font-semibold">Coins</TableHead>
-                <TableHead className="font-semibold">Rating</TableHead>
+                {idColumnLabel && <TableHead className="font-semibold whitespace-nowrap">{idColumnLabel}</TableHead>}
+                <TableHead className="font-semibold min-w-[200px]">
+                  <div className="space-y-2">
+                    <span>Name</span>
+                    <div className="relative">
+                      <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                      <Input
+                        placeholder="Search..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-7 h-7 text-xs bg-background/50 border-border"
+                      />
+                    </div>
+                  </div>
+                </TableHead>
+                {showTypeColumn && (
+                  <TableHead className="font-semibold min-w-[140px]">
+                    <div className="space-y-2">
+                      <span>Type</span>
+                      <Select value={typeFilter} onValueChange={setTypeFilter}>
+                        <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
+                          <SelectValue placeholder="All Types" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Types</SelectItem>
+                          <SelectItem value="Course">Course</SelectItem>
+                          <SelectItem value="Assessment">Assessment</SelectItem>
+                          <SelectItem value="Survey">Survey</SelectItem>
+                          <SelectItem value="Learning Journey">Learning Journey</SelectItem>
+                          <SelectItem value="ILT">ILT</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </TableHead>
+                )}
+                <TableHead className="font-semibold min-w-[140px]">
+                  <div className="space-y-2">
+                    <span>Status</span>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
+                        <SelectValue placeholder="All Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="Completed">Completed</SelectItem>
+                        <SelectItem value="Ongoing">Ongoing</SelectItem>
+                        <SelectItem value="Not Started">Not Started</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Distribution</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Start</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Completion</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Trainer</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Coins</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Rating</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredModules.map((module) => (
                 <TableRow key={module.id} className="hover:bg-secondary/30">
-                  {idColumnLabel && <TableCell className="font-mono text-xs">{module.id}</TableCell>}
+                  {idColumnLabel && <TableCell className="font-mono text-xs whitespace-nowrap">{module.id}</TableCell>}
                   <TableCell className="font-medium">{module.name}</TableCell>
                   {showTypeColumn && (
                     <TableCell>
@@ -181,14 +191,14 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                     </TableCell>
                   )}
                   <TableCell>
-                    <Badge variant="outline" className={cn("text-xs", getStatusColor(module.completionStatus))}>
+                    <Badge variant="outline" className={cn("text-xs whitespace-nowrap", getStatusColor(module.completionStatus))}>
                       {module.completionStatus}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{module.distributionDate}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{module.startDate}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{module.completionDate}</TableCell>
-                  <TableCell className="text-sm">{module.trainer}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{module.distributionDate}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{module.startDate}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{module.completionDate}</TableCell>
+                  <TableCell className="text-sm whitespace-nowrap">{module.trainer}</TableCell>
                   <TableCell className="font-mono text-journeys">{module.coins}</TableCell>
                   <TableCell>
                     {module.feedbackRating ? (
