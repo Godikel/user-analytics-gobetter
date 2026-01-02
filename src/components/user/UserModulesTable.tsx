@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Download, Filter } from "lucide-react";
+import { Search, Download, ArrowUp, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Module {
@@ -67,10 +67,42 @@ interface UserModulesTableProps {
   idColumnLabel?: string;
 }
 
+type SortColumn = "distributionDate" | "startDate" | "completionDate" | null;
+type SortDirection = "asc" | "desc";
+
 export function UserModulesTable({ showTypeColumn = true, title = "All Modules", filterByType, idColumnLabel }: UserModulesTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [sortColumn, setSortColumn] = useState<SortColumn>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      if (sortDirection === "asc") {
+        setSortDirection("desc");
+      } else {
+        setSortColumn(null);
+        setSortDirection("asc");
+      }
+    } else {
+      setSortColumn(column);
+      setSortDirection("asc");
+    }
+  };
+
+  const parseDate = (dateStr: string): Date | null => {
+    if (dateStr === "-") return null;
+    // Parse "15 Dec 2024, 3:45 PM" format
+    const match = dateStr.match(/(\d+) (\w+) (\d+), (\d+):(\d+) (AM|PM)/);
+    if (!match) return null;
+    const [, day, month, year, hours, mins, ampm] = match;
+    const monthIndex = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].indexOf(month);
+    let hour = parseInt(hours);
+    if (ampm === "PM" && hour !== 12) hour += 12;
+    if (ampm === "AM" && hour === 12) hour = 0;
+    return new Date(parseInt(year), monthIndex, parseInt(day), hour, parseInt(mins));
+  };
 
   // First filter by the fixed type if provided
   const baseModules = filterByType ? modules.filter(m => m.type === filterByType) : modules;
@@ -85,6 +117,21 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
     const matchesStatus = statusFilter === "all" || module.completionStatus === statusFilter;
 
     return matchesSearch && matchesType && matchesStatus;
+  });
+
+  const sortedModules = [...filteredModules].sort((a, b) => {
+    if (!sortColumn) return 0;
+    
+    const dateA = parseDate(a[sortColumn]);
+    const dateB = parseDate(b[sortColumn]);
+    
+    // Handle null dates (put them at the end)
+    if (!dateA && !dateB) return 0;
+    if (!dateA) return 1;
+    if (!dateB) return -1;
+    
+    const comparison = dateA.getTime() - dateB.getTime();
+    return sortDirection === "asc" ? comparison : -comparison;
   });
 
   const getStatusColor = (status: Module["completionStatus"]) => {
@@ -170,16 +217,46 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                     </Select>
                   </div>
                 </TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Distribution</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Start</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Completion</TableHead>
+                <TableHead 
+                  className="font-semibold whitespace-nowrap cursor-pointer hover:bg-secondary/70 transition-colors"
+                  onClick={() => handleSort("distributionDate")}
+                >
+                  <div className="flex items-center gap-1">
+                    Distribution
+                    {sortColumn === "distributionDate" && (
+                      sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+                    )}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="font-semibold whitespace-nowrap cursor-pointer hover:bg-secondary/70 transition-colors"
+                  onClick={() => handleSort("startDate")}
+                >
+                  <div className="flex items-center gap-1">
+                    Start
+                    {sortColumn === "startDate" && (
+                      sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+                    )}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="font-semibold whitespace-nowrap cursor-pointer hover:bg-secondary/70 transition-colors"
+                  onClick={() => handleSort("completionDate")}
+                >
+                  <div className="flex items-center gap-1">
+                    Completion
+                    {sortColumn === "completionDate" && (
+                      sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+                    )}
+                  </div>
+                </TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Trainer</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Coins</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Rating</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredModules.map((module) => (
+              {sortedModules.map((module) => (
                 <TableRow key={module.id} className="hover:bg-secondary/30">
                   {idColumnLabel && <TableCell className="font-mono text-xs whitespace-nowrap">{module.id}</TableCell>}
                   <TableCell className="font-medium">{module.name}</TableCell>
