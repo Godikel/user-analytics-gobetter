@@ -161,6 +161,7 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                 {showTypeColumn && <TableHead className="font-semibold">Type</TableHead>}
                 <TableHead className="font-semibold">Status</TableHead>
                 <TableHead className="font-semibold">Distribution</TableHead>
+                <TableHead className="font-semibold">Start</TableHead>
                 <TableHead className="font-semibold">Completion</TableHead>
                 <TableHead className="font-semibold">Trainer</TableHead>
                 <TableHead className="font-semibold">Coins</TableHead>
@@ -185,6 +186,7 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                     </Badge>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">{module.distributionDate}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground">{module.startDate}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{module.completionDate}</TableCell>
                   <TableCell className="text-sm">{module.trainer}</TableCell>
                   <TableCell className="font-mono text-journeys">{module.coins}</TableCell>
