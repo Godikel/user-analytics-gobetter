@@ -88,31 +88,31 @@ const UserAnalytics = () => {
             </TabsList>
 
             <TabsContent value="modules" className="mt-6">
-              <UserModulesTable showTypeColumn={true} />
+              <UserModulesTable showTypeColumn={true} title="All Modules" />
             </TabsContent>
 
             <TabsContent value="courses" className="mt-6">
-              <UserModulesTable showTypeColumn={false} />
+              <UserModulesTable showTypeColumn={false} title="Courses" filterByType="Course" />
             </TabsContent>
 
             <TabsContent value="assessments" className="mt-6">
-              <UserModulesTable showTypeColumn={false} />
+              <UserModulesTable showTypeColumn={false} title="Assessments" filterByType="Assessment" />
             </TabsContent>
 
             <TabsContent value="surveys" className="mt-6">
-              <UserModulesTable showTypeColumn={false} />
+              <UserModulesTable showTypeColumn={false} title="Surveys" filterByType="Survey" />
             </TabsContent>
 
             <TabsContent value="journeys" className="mt-6">
-              <UserModulesTable showTypeColumn={false} />
+              <UserModulesTable showTypeColumn={false} title="Learning Journeys" filterByType="Learning Journey" />
             </TabsContent>
 
             <TabsContent value="ilts" className="mt-6">
-              <UserModulesTable showTypeColumn={false} />
+              <UserModulesTable showTypeColumn={false} title="ILTs" filterByType="ILT" />
             </TabsContent>
 
             <TabsContent value="feeds" className="mt-6">
-              <UserModulesTable showTypeColumn={false} />
+              <UserModulesTable showTypeColumn={false} title="Feeds" />
             </TabsContent>
           </Tabs>
       </main>
