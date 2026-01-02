@@ -92,27 +92,27 @@ const UserAnalytics = () => {
             </TabsContent>
 
             <TabsContent value="courses" className="mt-6">
-              <UserModulesTable showTypeColumn={false} title="Courses" filterByType="Course" />
+              <UserModulesTable showTypeColumn={false} title="Courses" filterByType="Course" idColumnLabel="Course ID" />
             </TabsContent>
 
             <TabsContent value="assessments" className="mt-6">
-              <UserModulesTable showTypeColumn={false} title="Assessments" filterByType="Assessment" />
+              <UserModulesTable showTypeColumn={false} title="Assessments" filterByType="Assessment" idColumnLabel="Assessment ID" />
             </TabsContent>
 
             <TabsContent value="surveys" className="mt-6">
-              <UserModulesTable showTypeColumn={false} title="Surveys" filterByType="Survey" />
+              <UserModulesTable showTypeColumn={false} title="Surveys" filterByType="Survey" idColumnLabel="Survey ID" />
             </TabsContent>
 
             <TabsContent value="journeys" className="mt-6">
-              <UserModulesTable showTypeColumn={false} title="Learning Journeys" filterByType="Learning Journey" />
+              <UserModulesTable showTypeColumn={false} title="Learning Journeys" filterByType="Learning Journey" idColumnLabel="Journey ID" />
             </TabsContent>
 
             <TabsContent value="ilts" className="mt-6">
-              <UserModulesTable showTypeColumn={false} title="ILTs" filterByType="ILT" />
+              <UserModulesTable showTypeColumn={false} title="ILTs" filterByType="ILT" idColumnLabel="ILT ID" />
             </TabsContent>
 
             <TabsContent value="feeds" className="mt-6">
-              <UserModulesTable showTypeColumn={false} title="Feeds" />
+              <UserModulesTable showTypeColumn={false} title="Feeds" idColumnLabel="Feed ID" />
             </TabsContent>
           </Tabs>
       </main>

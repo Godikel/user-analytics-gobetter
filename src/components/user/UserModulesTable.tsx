@@ -64,9 +64,10 @@ interface UserModulesTableProps {
   showTypeColumn?: boolean;
   title?: string;
   filterByType?: Module["type"];
+  idColumnLabel?: string;
 }
 
-export function UserModulesTable({ showTypeColumn = true, title = "All Modules", filterByType }: UserModulesTableProps) {
+export function UserModulesTable({ showTypeColumn = true, title = "All Modules", filterByType, idColumnLabel }: UserModulesTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -155,7 +156,7 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
           <Table>
             <TableHeader>
               <TableRow className="bg-secondary/50 hover:bg-secondary/50">
-                <TableHead className="font-semibold">Module ID</TableHead>
+                {idColumnLabel && <TableHead className="font-semibold">{idColumnLabel}</TableHead>}
                 <TableHead className="font-semibold">Name</TableHead>
                 {showTypeColumn && <TableHead className="font-semibold">Type</TableHead>}
                 <TableHead className="font-semibold">Status</TableHead>
@@ -169,7 +170,7 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
             <TableBody>
               {filteredModules.map((module) => (
                 <TableRow key={module.id} className="hover:bg-secondary/30">
-                  <TableCell className="font-mono text-xs">{module.id}</TableCell>
+                  {idColumnLabel && <TableCell className="font-mono text-xs">{module.id}</TableCell>}
                   <TableCell className="font-medium">{module.name}</TableCell>
                   {showTypeColumn && (
                     <TableCell>
