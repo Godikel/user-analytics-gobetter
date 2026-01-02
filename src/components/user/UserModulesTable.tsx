@@ -62,14 +62,19 @@ const modules = generateModules(25);
 
 interface UserModulesTableProps {
   showTypeColumn?: boolean;
+  title?: string;
+  filterByType?: Module["type"];
 }
 
-export function UserModulesTable({ showTypeColumn = true }: UserModulesTableProps) {
+export function UserModulesTable({ showTypeColumn = true, title = "All Modules", filterByType }: UserModulesTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const filteredModules = modules.filter((module) => {
+  // First filter by the fixed type if provided
+  const baseModules = filterByType ? modules.filter(m => m.type === filterByType) : modules;
+
+  const filteredModules = baseModules.filter((module) => {
     const matchesSearch =
       module.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       module.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -102,7 +107,7 @@ export function UserModulesTable({ showTypeColumn = true }: UserModulesTableProp
   return (
     <Card variant="elevated" className="animate-slide-up" style={{ animationDelay: "200ms" }}>
       <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <CardTitle className="text-lg">Modules</CardTitle>
+        <CardTitle className="text-lg">{title}</CardTitle>
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -195,7 +200,7 @@ export function UserModulesTable({ showTypeColumn = true }: UserModulesTableProp
           </Table>
         </div>
         <div className="mt-4 text-sm text-muted-foreground">
-          Showing {filteredModules.length} of {modules.length} modules
+          Showing {filteredModules.length} of {baseModules.length} {title.toLowerCase()}
         </div>
       </CardContent>
     </Card>
