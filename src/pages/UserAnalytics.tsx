@@ -88,31 +88,31 @@ const UserAnalytics = () => {
             </TabsList>
 
             <TabsContent value="modules" className="mt-6">
-              <UserModulesTable />
+              <UserModulesTable showTypeColumn={true} />
             </TabsContent>
 
             <TabsContent value="courses" className="mt-6">
-              <UserModulesTable />
+              <UserModulesTable showTypeColumn={false} />
             </TabsContent>
 
             <TabsContent value="assessments" className="mt-6">
-              <UserModulesTable />
+              <UserModulesTable showTypeColumn={false} />
             </TabsContent>
 
             <TabsContent value="surveys" className="mt-6">
-              <UserModulesTable />
+              <UserModulesTable showTypeColumn={false} />
             </TabsContent>
 
             <TabsContent value="journeys" className="mt-6">
-              <UserModulesTable />
+              <UserModulesTable showTypeColumn={false} />
             </TabsContent>
 
             <TabsContent value="ilts" className="mt-6">
-              <UserModulesTable />
+              <UserModulesTable showTypeColumn={false} />
             </TabsContent>
 
             <TabsContent value="feeds" className="mt-6">
-              <UserModulesTable />
+              <UserModulesTable showTypeColumn={false} />
             </TabsContent>
           </Tabs>
       </main>

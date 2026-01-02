@@ -60,7 +60,11 @@ const generateModules = (count: number): Module[] => {
 
 const modules = generateModules(25);
 
-export function UserModulesTable() {
+interface UserModulesTableProps {
+  showTypeColumn?: boolean;
+}
+
+export function UserModulesTable({ showTypeColumn = true }: UserModulesTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -109,19 +113,21 @@ export function UserModulesTable() {
               className="pl-10 w-[200px] bg-secondary/50 border-border"
             />
           </div>
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-[140px] bg-secondary/50 border-border">
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="Course">Course</SelectItem>
-              <SelectItem value="Assessment">Assessment</SelectItem>
-              <SelectItem value="Survey">Survey</SelectItem>
-              <SelectItem value="Learning Journey">Learning Journey</SelectItem>
-              <SelectItem value="ILT">ILT</SelectItem>
-            </SelectContent>
-          </Select>
+          {showTypeColumn && (
+            <Select value={typeFilter} onValueChange={setTypeFilter}>
+              <SelectTrigger className="w-[140px] bg-secondary/50 border-border">
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="Course">Course</SelectItem>
+                <SelectItem value="Assessment">Assessment</SelectItem>
+                <SelectItem value="Survey">Survey</SelectItem>
+                <SelectItem value="Learning Journey">Learning Journey</SelectItem>
+                <SelectItem value="ILT">ILT</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[140px] bg-secondary/50 border-border">
               <SelectValue placeholder="Status" />
@@ -146,7 +152,7 @@ export function UserModulesTable() {
               <TableRow className="bg-secondary/50 hover:bg-secondary/50">
                 <TableHead className="font-semibold">Module ID</TableHead>
                 <TableHead className="font-semibold">Name</TableHead>
-                <TableHead className="font-semibold">Type</TableHead>
+                {showTypeColumn && <TableHead className="font-semibold">Type</TableHead>}
                 <TableHead className="font-semibold">Status</TableHead>
                 <TableHead className="font-semibold">Distribution</TableHead>
                 <TableHead className="font-semibold">Completion</TableHead>
@@ -160,11 +166,13 @@ export function UserModulesTable() {
                 <TableRow key={module.id} className="hover:bg-secondary/30">
                   <TableCell className="font-mono text-xs">{module.id}</TableCell>
                   <TableCell className="font-medium">{module.name}</TableCell>
-                  <TableCell>
-                    <span className={cn("text-sm", getTypeColor(module.type))}>
-                      {module.type}
-                    </span>
-                  </TableCell>
+                  {showTypeColumn && (
+                    <TableCell>
+                      <span className={cn("text-sm", getTypeColor(module.type))}>
+                        {module.type}
+                      </span>
+                    </TableCell>
+                  )}
                   <TableCell>
                     <Badge variant="outline" className={cn("text-xs", getStatusColor(module.completionStatus))}>
                       {module.completionStatus}
