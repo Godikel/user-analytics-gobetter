@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { UserProfileHeader } from "@/components/user/UserProfileHeader";
 import { ModuleStatsGrid } from "@/components/user/ModuleStatsGrid";
 import { UserModulesTable } from "@/components/user/UserModulesTable";
+import { CoursesTable } from "@/components/user/CoursesTable";
 import { getUserById } from "@/data/users";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, RefreshCw, Settings } from "lucide-react";
@@ -92,7 +93,7 @@ const UserAnalytics = () => {
             </TabsContent>
 
             <TabsContent value="courses" className="mt-6">
-              <UserModulesTable showTypeColumn={false} title="Courses" filterByType="Course" idColumnLabel="Course ID" />
+              <CoursesTable />
             </TabsContent>
 
             <TabsContent value="assessments" className="mt-6">
