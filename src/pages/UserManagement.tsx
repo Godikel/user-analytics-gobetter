@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { users } from "@/data/users";
-import { Search, MapPin, Mail, Clock, Users, ArrowDownAZ, CalendarPlus } from "lucide-react";
+import { Search, Users, ArrowDownAZ, CalendarPlus, ExternalLink, Phone, Mail } from "lucide-react";
 
 type SortOption = "alphabetical" | "latest";
 
@@ -33,7 +35,6 @@ const UserManagement = () => {
     if (sortBy === "alphabetical") {
       return a.name.localeCompare(b.name);
     } else {
-      // Parse "15 Dec 2024, 3:45 PM" format for latest added (createdOn)
       const parseDate = (dateStr: string): Date => {
         const match = dateStr.match(/(\d+) (\w+) (\d+), (\d+):(\d+) (AM|PM)/);
         if (!match) return new Date(0);
@@ -60,158 +61,203 @@ const UserManagement = () => {
     }
   };
 
-  const getInitials = (name: string) => {
-    return name.split(" ").map(n => n[0]).join("").toUpperCase();
+  const getProgressColor = (completed: number, distributed: number) => {
+    const percentage = distributed > 0 ? (completed / distributed) * 100 : 0;
+    if (percentage >= 80) return "bg-live-classes";
+    if (percentage >= 50) return "bg-journeys";
+    if (percentage >= 25) return "bg-assessments";
+    return "bg-muted-foreground";
   };
 
-  const getTotalCompleted = (modules: typeof users[0]["modules"]) => {
-    return Object.values(modules).reduce((acc, m) => acc + m.completed, 0);
-  };
-
-  const getTotalDistributed = (modules: typeof users[0]["modules"]) => {
-    return Object.values(modules).reduce((acc, m) => acc + m.distributed, 0);
+  const renderModuleStatus = (completed: number, distributed: number) => {
+    const percentage = distributed > 0 ? (completed / distributed) * 100 : 0;
+    return (
+      <div className="flex flex-col gap-1 min-w-[100px]">
+        <div className="flex items-center justify-between text-xs">
+          <span className="font-mono">{completed}/{distributed}</span>
+          <span className="text-muted-foreground">{Math.round(percentage)}%</span>
+        </div>
+        <Progress 
+          value={percentage} 
+          className="h-1.5" 
+          indicatorClassName={getProgressColor(completed, distributed)}
+        />
+      </div>
+    );
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="p-6 space-y-6 max-w-7xl mx-auto">
-          {/* Page Header */}
-          <div className="flex flex-col gap-4">
-            <div>
-              <h2 className="text-2xl font-bold">User Management</h2>
-              <p className="text-muted-foreground text-sm">
-                View and manage all users on the platform
-              </p>
-            </div>
-
-            {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by name, email, or user ID..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-card border-border"
-                />
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[160px] bg-card border-border">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="Active">Active</SelectItem>
-                  <SelectItem value="Hired">Hired</SelectItem>
-                  <SelectItem value="Inactive">Inactive</SelectItem>
-                  <SelectItem value="Terminated">Terminated</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={roleFilter} onValueChange={setRoleFilter}>
-                <SelectTrigger className="w-[200px] bg-card border-border">
-                  <SelectValue placeholder="Role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Roles</SelectItem>
-                  {uniqueRoles.map(role => (
-                    <SelectItem key={role} value={role}>{role}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-                <SelectTrigger className="w-[180px] bg-card border-border">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="alphabetical">
-                    <div className="flex items-center gap-2">
-                      <ArrowDownAZ className="h-4 w-4" />
-                      <span>Alphabetical</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="latest">
-                    <div className="flex items-center gap-2">
-                      <CalendarPlus className="h-4 w-4" />
-                      <span>Latest Added</span>
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Users className="h-4 w-4" />
-              <span>{sortedUsers.length} users found</span>
-            </div>
+      <main className="p-6 space-y-6 max-w-full mx-auto">
+        {/* Page Header */}
+        <div className="flex flex-col gap-4">
+          <div>
+            <h2 className="text-2xl font-bold">User Management</h2>
+            <p className="text-muted-foreground text-sm">
+              View and manage all users on the platform
+            </p>
           </div>
 
-          {/* User Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {sortedUsers.map((user, index) => (
-              <Link key={user.id} to={`/users/${user.id}`}>
-                <Card 
-                  variant="elevated" 
-                  className="p-4 hover:bg-secondary/50 transition-all cursor-pointer animate-slide-up group"
-                  style={{ animationDelay: `${Math.min(index * 30, 300)}ms` }}
-                >
-                  <div className="flex items-start gap-4">
-                    <Avatar className="h-14 w-14 border-2 border-border group-hover:border-primary/50 transition-colors">
-                      <AvatarFallback className="bg-secondary text-foreground text-lg">
-                        {getInitials(user.name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-sm truncate">{user.name}</h3>
-                        <Badge variant="outline" className={`text-[10px] ${getStatusColor(user.status)}`}>
-                          {user.status}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {user.role} @ {user.organization}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        ID: {user.userId}
-                      </p>
-                    </div>
+          {/* Filters */}
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by name, email, or user ID..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-card border-border"
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[160px] bg-card border-border">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="Active">Active</SelectItem>
+                <SelectItem value="Hired">Hired</SelectItem>
+                <SelectItem value="Inactive">Inactive</SelectItem>
+                <SelectItem value="Terminated">Terminated</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={roleFilter} onValueChange={setRoleFilter}>
+              <SelectTrigger className="w-[200px] bg-card border-border">
+                <SelectValue placeholder="Role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Roles</SelectItem>
+                {uniqueRoles.map(role => (
+                  <SelectItem key={role} value={role}>{role}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
+              <SelectTrigger className="w-[180px] bg-card border-border">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="alphabetical">
+                  <div className="flex items-center gap-2">
+                    <ArrowDownAZ className="h-4 w-4" />
+                    <span>Alphabetical</span>
                   </div>
-
-                  <div className="mt-4 pt-4 border-t border-border space-y-2">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <MapPin className="h-3 w-3" />
-                      <span>{user.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Mail className="h-3 w-3" />
-                      <span className="truncate">{user.email}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Clock className="h-3 w-3" />
-                      <span>Last active: {user.lastActive}</span>
-                    </div>
+                </SelectItem>
+                <SelectItem value="latest">
+                  <div className="flex items-center gap-2">
+                    <CalendarPlus className="h-4 w-4" />
+                    <span>Latest Added</span>
                   </div>
-
-                  <div className="mt-4 pt-4 border-t border-border">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-muted-foreground">Modules Progress</span>
-                      <span className="font-mono text-courses">
-                        {getTotalCompleted(user.modules)}/{getTotalDistributed(user.modules)}
-                      </span>
-                    </div>
-                    <div className="mt-2 h-1.5 bg-secondary rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-courses to-primary rounded-full transition-all"
-                        style={{ 
-                          width: `${(getTotalCompleted(user.modules) / getTotalDistributed(user.modules)) * 100}%` 
-                        }}
-                      />
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            ))}
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Users className="h-4 w-4" />
+            <span>{sortedUsers.length} users found</span>
+          </div>
+        </div>
+
+        {/* Users Table with Horizontal Scroll */}
+        <div className="rounded-lg border border-border bg-card relative">
+          <ScrollArea className="w-full">
+            <div className="min-w-[1400px]">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-secondary/50 hover:bg-secondary/50">
+                    <TableHead className="font-semibold min-w-[280px]">User</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">User ID</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Role</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">Status</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap text-center">Courses</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap text-center">Assessments</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap text-center">Surveys</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap text-center">Playlists</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap text-center">Live Classes</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap text-center">Feeds</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap sticky right-0 bg-secondary/50 z-10">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedUsers.map((user, index) => {
+                    const totalCompleted = Object.values(user.modules).reduce((acc, m) => acc + m.completed, 0);
+                    const totalDistributed = Object.values(user.modules).reduce((acc, m) => acc + m.distributed, 0);
+                    const overallProgress = totalDistributed > 0 ? (totalCompleted / totalDistributed) * 100 : 0;
+
+                    return (
+                      <TableRow 
+                        key={user.id} 
+                        className="hover:bg-secondary/30 animate-slide-up"
+                        style={{ animationDelay: `${Math.min(index * 20, 200)}ms` }}
+                      >
+                        <TableCell>
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
+                                <span className="text-sm font-semibold text-primary">
+                                  {user.name.split(" ").map(n => n[0]).join("").toUpperCase()}
+                                </span>
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="font-medium">{user.name}</span>
+                                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                                  <span className="flex items-center gap-1">
+                                    <Phone className="h-3 w-3" />
+                                    {user.phone}
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <Mail className="h-3 w-3" />
+                                    {user.email}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            {/* Overall Progress Bar */}
+                            <div className="mt-2 flex items-center gap-2">
+                              <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-gradient-to-r from-courses via-primary to-live-classes rounded-full transition-all"
+                                  style={{ width: `${overallProgress}%` }}
+                                />
+                              </div>
+                              <span className="text-xs font-mono text-muted-foreground min-w-[48px]">
+                                {Math.round(overallProgress)}%
+                              </span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-mono text-sm">{user.userId}</TableCell>
+                        <TableCell className="text-sm">{user.role}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className={`text-xs ${getStatusColor(user.status)}`}>
+                            {user.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{renderModuleStatus(user.modules.courses.completed, user.modules.courses.distributed)}</TableCell>
+                        <TableCell>{renderModuleStatus(user.modules.assessments.completed, user.modules.assessments.distributed)}</TableCell>
+                        <TableCell>{renderModuleStatus(user.modules.surveys.completed, user.modules.surveys.distributed)}</TableCell>
+                        <TableCell>{renderModuleStatus(user.modules.learningJourneys.completed, user.modules.learningJourneys.distributed)}</TableCell>
+                        <TableCell>{renderModuleStatus(user.modules.ilts.completed, user.modules.ilts.distributed)}</TableCell>
+                        <TableCell>{renderModuleStatus(user.modules.feeds.completed, user.modules.feeds.distributed)}</TableCell>
+                        <TableCell className="sticky right-0 bg-card z-10">
+                          <Link to={`/users/${user.id}`}>
+                            <Button variant="outline" size="sm" className="gap-1.5 whitespace-nowrap">
+                              <ExternalLink className="h-3.5 w-3.5" />
+                              View Details
+                            </Button>
+                          </Link>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        </div>
       </main>
     </div>
   );
