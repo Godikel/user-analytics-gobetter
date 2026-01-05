@@ -1,10 +1,9 @@
 import { Card } from "@/components/ui/card";
-import { User } from "@/data/users";
 import { BookOpen, ClipboardCheck, MessageSquare, Route, Video, Newspaper } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getModuleStatsForUser, ModuleStats } from "@/data/moduleData";
 
 interface ModuleStatsGridProps {
-  modules: User["modules"];
   onModuleClick?: (tabValue: string) => void;
 }
 
@@ -17,11 +16,13 @@ const moduleConfig = [
   { key: "feeds", tabValue: "feeds", label: "Feeds", icon: Newspaper, colorClass: "text-feeds border-feeds/30 bg-feeds/10" },
 ];
 
-export function ModuleStatsGrid({ modules, onModuleClick }: ModuleStatsGridProps) {
+export function ModuleStatsGrid({ onModuleClick }: ModuleStatsGridProps) {
+  const modules = getModuleStatsForUser();
+  
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 animate-slide-up" style={{ animationDelay: "100ms" }}>
-      {moduleConfig.map((config, index) => {
-        const module = modules[config.key as keyof User["modules"]];
+      {moduleConfig.map((config) => {
+        const module = modules[config.key as keyof typeof modules];
         const percentage = module.distributed > 0 
           ? Math.round((module.completed / module.distributed) * 100) 
           : 0;

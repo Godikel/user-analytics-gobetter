@@ -39,13 +39,16 @@ const generateDateTime = (): string => {
   return `${day} Dec 2024, ${hours}:${mins.toString().padStart(2, '0')} ${ampm}`;
 };
 
-const generateAssessments = (count: number): Assessment[] => {
+import { moduleStats } from "@/data/moduleData";
+
+const generateAssessments = (): Assessment[] => {
+  const total = moduleStats.assessments.distributed;
+  const completed = moduleStats.assessments.completed;
   const names = [
     "Sales Knowledge Test", "Compliance Assessment", "Product Certification", "Security Awareness",
     "Leadership Evaluation", "Technical Skills Test", "Customer Service Quiz", "Safety Protocol Test",
     "Onboarding Assessment", "Annual Performance Review", "Skills Gap Analysis", "Competency Check"
   ];
-  const statuses: Assessment["completionStatus"][] = ["Completed", "Ongoing", "Not Started"];
   const tagOptions = ["Compliance", "Technical", "Soft Skills", "Leadership", "Safety", "Sales", "HR", "Onboarding"];
   const feedbackCommentsOptions = [
     "Great assessment, very relevant to my work",
@@ -57,8 +60,9 @@ const generateAssessments = (count: number): Assessment[] => {
   ];
   const autoDistGroups = ["New Hires 2024", "Sales Team Q1", "Engineering Onboarding", "Leadership Track", "Compliance Annual"];
 
-  return Array.from({ length: count }, (_, i) => {
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
+  return Array.from({ length: total }, (_, i) => {
+    // Distribute statuses: first 'completed' items are Completed, rest are Ongoing or Not Started
+    const status: Assessment["completionStatus"] = i < completed ? "Completed" : (i < completed + Math.floor((total - completed) / 2) ? "Ongoing" : "Not Started");
     const isCompleted = status === "Completed";
     const isAutomatic = i % 2 !== 0;
     const numTags = Math.floor(Math.random() * 3) + 1;
@@ -89,7 +93,7 @@ const generateAssessments = (count: number): Assessment[] => {
   });
 };
 
-const assessments = generateAssessments(25);
+const assessments = generateAssessments();
 
 type SortColumn = "distributionDate" | "completionDate" | null;
 type SortDirection = "asc" | "desc";

@@ -85,14 +85,18 @@ const generateCardDetails = (courseId: string, courseName: string, type: "Learni
   }));
 };
 
-const generateCourses = (count: number): Course[] => {
-  const statuses: Course["completionStatus"][] = ["Completed", "Ongoing", "Not Started"];
+import { moduleStats } from "@/data/moduleData";
+
+const generateCourses = (): Course[] => {
+  const total = moduleStats.courses.distributed;
+  const completed = moduleStats.courses.completed;
   const enforcedOptions: Course["enforced"][] = ["No", "Hard", "Soft"];
   
-  return Array.from({ length: count }, (_, i) => {
+  return Array.from({ length: total }, (_, i) => {
     const courseId = `CRS${String(i + 1).padStart(4, '0')}`;
     const courseName = courseNames[i % courseNames.length];
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
+    // Distribute statuses: first 'completed' items are Completed, rest are Ongoing or Not Started
+    const status: Course["completionStatus"] = i < completed ? "Completed" : (i < completed + Math.floor((total - completed) / 2) ? "Ongoing" : "Not Started");
     const distType = i % 2 === 0 ? "Independent" : "Automatic";
     
     return {
@@ -118,7 +122,7 @@ const generateCourses = (count: number): Course[] => {
   });
 };
 
-const courses = generateCourses(25);
+const courses = generateCourses();
 
 type SortColumn = "distributionDate" | "completionDate" | null;
 type SortDirection = "asc" | "desc";
