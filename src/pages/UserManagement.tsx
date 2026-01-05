@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -14,21 +14,39 @@ import { Search, Users, ArrowDownAZ, CalendarPlus, ExternalLink, Phone, Mail } f
 type SortOption = "alphabetical" | "latest";
 
 const UserManagement = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<SortOption>("alphabetical");
+  
+  // Column-specific filters
+  const [nameSearch, setNameSearch] = useState("");
+  const [userIdSearch, setUserIdSearch] = useState("");
+  const [roleColumnFilter, setRoleColumnFilter] = useState<string>("all");
+  const [statusColumnFilter, setStatusColumnFilter] = useState<string>("all");
 
   const filteredUsers = users.filter((user) => {
-    const matchesSearch =
+    const matchesGlobalSearch =
+      searchTerm === "" ||
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.userId.includes(searchTerm);
     
     const matchesStatus = statusFilter === "all" || user.status === statusFilter;
     const matchesRole = roleFilter === "all" || user.role === roleFilter;
+    
+    // Column filters
+    const matchesNameSearch = nameSearch === "" || 
+      user.name.toLowerCase().includes(nameSearch.toLowerCase()) ||
+      user.email.toLowerCase().includes(nameSearch.toLowerCase()) ||
+      user.phone.includes(nameSearch);
+    const matchesUserIdSearch = userIdSearch === "" || user.userId.includes(userIdSearch);
+    const matchesRoleColumn = roleColumnFilter === "all" || user.role === roleColumnFilter;
+    const matchesStatusColumn = statusColumnFilter === "all" || user.status === statusColumnFilter;
 
-    return matchesSearch && matchesStatus && matchesRole;
+    return matchesGlobalSearch && matchesStatus && matchesRole && 
+           matchesNameSearch && matchesUserIdSearch && matchesRoleColumn && matchesStatusColumn;
   });
 
   const sortedUsers = [...filteredUsers].sort((a, b) => {
@@ -72,7 +90,7 @@ const UserManagement = () => {
   const renderModuleStatus = (completed: number, distributed: number) => {
     const percentage = distributed > 0 ? (completed / distributed) * 100 : 0;
     return (
-      <div className="flex flex-col gap-1 min-w-[100px]">
+      <div className="flex flex-col gap-1 min-w-[80px]">
         <div className="flex items-center justify-between text-xs">
           <span className="font-mono">{completed}/{distributed}</span>
           <span className="text-muted-foreground">{Math.round(percentage)}%</span>
@@ -84,6 +102,10 @@ const UserManagement = () => {
         />
       </div>
     );
+  };
+
+  const handleRowClick = (userId: string) => {
+    navigate(`/users/${userId}`);
   };
 
   return (
@@ -99,7 +121,7 @@ const UserManagement = () => {
             </p>
           </div>
 
-          {/* Filters */}
+          {/* Global Filters */}
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -160,103 +182,186 @@ const UserManagement = () => {
           </div>
         </div>
 
-        {/* Users Table with Horizontal Scroll */}
+        {/* Users Table with Horizontal Scroll and Fixed Action Column */}
         <div className="rounded-lg border border-border bg-card relative">
-          <ScrollArea className="w-full">
-            <div className="min-w-[1400px]">
+          <div className="flex">
+            {/* Scrollable Table Area */}
+            <ScrollArea className="flex-1">
+              <div className="min-w-[1200px]">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-secondary/50 hover:bg-secondary/50">
+                      <TableHead className="font-semibold min-w-[220px]">
+                        <div className="space-y-2">
+                          <span>User</span>
+                          <div className="relative">
+                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                            <Input
+                              placeholder="Search..."
+                              value={nameSearch}
+                              onChange={(e) => setNameSearch(e.target.value)}
+                              className="pl-7 h-7 text-xs bg-background/50 border-border"
+                            />
+                          </div>
+                        </div>
+                      </TableHead>
+                      <TableHead className="font-semibold min-w-[100px]">
+                        <div className="space-y-2">
+                          <span>User ID</span>
+                          <Input
+                            placeholder="Filter..."
+                            value={userIdSearch}
+                            onChange={(e) => setUserIdSearch(e.target.value)}
+                            className="h-7 text-xs bg-background/50 border-border"
+                          />
+                        </div>
+                      </TableHead>
+                      <TableHead className="font-semibold min-w-[160px]">
+                        <div className="space-y-2">
+                          <span>Role</span>
+                          <Select value={roleColumnFilter} onValueChange={setRoleColumnFilter}>
+                            <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
+                              <SelectValue placeholder="All Roles" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Roles</SelectItem>
+                              {uniqueRoles.map(role => (
+                                <SelectItem key={role} value={role}>{role}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </TableHead>
+                      <TableHead className="font-semibold min-w-[120px]">
+                        <div className="space-y-2">
+                          <span>Status</span>
+                          <Select value={statusColumnFilter} onValueChange={setStatusColumnFilter}>
+                            <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
+                              <SelectValue placeholder="All" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Status</SelectItem>
+                              <SelectItem value="Active">Active</SelectItem>
+                              <SelectItem value="Hired">Hired</SelectItem>
+                              <SelectItem value="Inactive">Inactive</SelectItem>
+                              <SelectItem value="Terminated">Terminated</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </TableHead>
+                      <TableHead className="font-semibold whitespace-nowrap text-center">Courses</TableHead>
+                      <TableHead className="font-semibold whitespace-nowrap text-center">Assessments</TableHead>
+                      <TableHead className="font-semibold whitespace-nowrap text-center">Surveys</TableHead>
+                      <TableHead className="font-semibold whitespace-nowrap text-center">Playlists</TableHead>
+                      <TableHead className="font-semibold whitespace-nowrap text-center">Live Classes</TableHead>
+                      <TableHead className="font-semibold whitespace-nowrap text-center">Feeds</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sortedUsers.map((user, index) => {
+                      const totalCompleted = Object.values(user.modules).reduce((acc, m) => acc + m.completed, 0);
+                      const totalDistributed = Object.values(user.modules).reduce((acc, m) => acc + m.distributed, 0);
+                      const overallProgress = totalDistributed > 0 ? (totalCompleted / totalDistributed) * 100 : 0;
+
+                      return (
+                        <TableRow 
+                          key={user.id} 
+                          className="hover:bg-secondary/30 cursor-pointer animate-slide-up"
+                          style={{ animationDelay: `${Math.min(index * 20, 200)}ms` }}
+                          onClick={() => handleRowClick(user.id)}
+                        >
+                          <TableCell>
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shrink-0">
+                                  <span className="text-xs font-semibold text-primary">
+                                    {user.name.split(" ").map(n => n[0]).join("").toUpperCase()}
+                                  </span>
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                  <span className="font-medium text-sm truncate">{user.name}</span>
+                                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                                    <Phone className="h-2.5 w-2.5 shrink-0" />
+                                    <span className="truncate">{user.phone}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                                    <Mail className="h-2.5 w-2.5 shrink-0" />
+                                    <span className="truncate">{user.email}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              {/* Overall Progress Bar */}
+                              <div className="flex items-center gap-2 mt-1">
+                                <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
+                                  <div 
+                                    className="h-full bg-gradient-to-r from-courses via-primary to-live-classes rounded-full transition-all"
+                                    style={{ width: `${overallProgress}%` }}
+                                  />
+                                </div>
+                                <span className="text-[10px] font-mono text-muted-foreground min-w-[32px]">
+                                  {Math.round(overallProgress)}%
+                                </span>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-mono text-sm">{user.userId}</TableCell>
+                          <TableCell className="text-sm">{user.role}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={`text-xs ${getStatusColor(user.status)}`}>
+                              {user.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{renderModuleStatus(user.modules.courses.completed, user.modules.courses.distributed)}</TableCell>
+                          <TableCell>{renderModuleStatus(user.modules.assessments.completed, user.modules.assessments.distributed)}</TableCell>
+                          <TableCell>{renderModuleStatus(user.modules.surveys.completed, user.modules.surveys.distributed)}</TableCell>
+                          <TableCell>{renderModuleStatus(user.modules.learningJourneys.completed, user.modules.learningJourneys.distributed)}</TableCell>
+                          <TableCell>{renderModuleStatus(user.modules.ilts.completed, user.modules.ilts.distributed)}</TableCell>
+                          <TableCell>{renderModuleStatus(user.modules.feeds.completed, user.modules.feeds.distributed)}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+            
+            {/* Fixed Action Column */}
+            <div className="border-l border-border bg-card shrink-0">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-secondary/50 hover:bg-secondary/50">
-                    <TableHead className="font-semibold min-w-[280px]">User</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">User ID</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">Role</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">Status</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap text-center">Courses</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap text-center">Assessments</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap text-center">Surveys</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap text-center">Playlists</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap text-center">Live Classes</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap text-center">Feeds</TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap sticky right-0 bg-secondary/50 z-10">Actions</TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap h-[76px] flex items-end pb-2">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sortedUsers.map((user, index) => {
-                    const totalCompleted = Object.values(user.modules).reduce((acc, m) => acc + m.completed, 0);
-                    const totalDistributed = Object.values(user.modules).reduce((acc, m) => acc + m.distributed, 0);
-                    const overallProgress = totalDistributed > 0 ? (totalCompleted / totalDistributed) * 100 : 0;
-
-                    return (
-                      <TableRow 
-                        key={user.id} 
-                        className="hover:bg-secondary/30 animate-slide-up"
-                        style={{ animationDelay: `${Math.min(index * 20, 200)}ms` }}
-                      >
-                        <TableCell>
-                          <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
-                                <span className="text-sm font-semibold text-primary">
-                                  {user.name.split(" ").map(n => n[0]).join("").toUpperCase()}
-                                </span>
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="font-medium">{user.name}</span>
-                                <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                                  <span className="flex items-center gap-1">
-                                    <Phone className="h-3 w-3" />
-                                    {user.phone}
-                                  </span>
-                                  <span className="flex items-center gap-1">
-                                    <Mail className="h-3 w-3" />
-                                    {user.email}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            {/* Overall Progress Bar */}
-                            <div className="mt-2 flex items-center gap-2">
-                              <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
-                                <div 
-                                  className="h-full bg-gradient-to-r from-courses via-primary to-live-classes rounded-full transition-all"
-                                  style={{ width: `${overallProgress}%` }}
-                                />
-                              </div>
-                              <span className="text-xs font-mono text-muted-foreground min-w-[48px]">
-                                {Math.round(overallProgress)}%
-                              </span>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-mono text-sm">{user.userId}</TableCell>
-                        <TableCell className="text-sm">{user.role}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className={`text-xs ${getStatusColor(user.status)}`}>
-                            {user.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{renderModuleStatus(user.modules.courses.completed, user.modules.courses.distributed)}</TableCell>
-                        <TableCell>{renderModuleStatus(user.modules.assessments.completed, user.modules.assessments.distributed)}</TableCell>
-                        <TableCell>{renderModuleStatus(user.modules.surveys.completed, user.modules.surveys.distributed)}</TableCell>
-                        <TableCell>{renderModuleStatus(user.modules.learningJourneys.completed, user.modules.learningJourneys.distributed)}</TableCell>
-                        <TableCell>{renderModuleStatus(user.modules.ilts.completed, user.modules.ilts.distributed)}</TableCell>
-                        <TableCell>{renderModuleStatus(user.modules.feeds.completed, user.modules.feeds.distributed)}</TableCell>
-                        <TableCell className="sticky right-0 bg-card z-10">
-                          <Link to={`/users/${user.id}`}>
-                            <Button variant="outline" size="sm" className="gap-1.5 whitespace-nowrap">
-                              <ExternalLink className="h-3.5 w-3.5" />
-                              View Details
-                            </Button>
-                          </Link>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                  {sortedUsers.map((user, index) => (
+                    <TableRow 
+                      key={user.id} 
+                      className="hover:bg-secondary/30 cursor-pointer animate-slide-up h-[97px]"
+                      style={{ animationDelay: `${Math.min(index * 20, 200)}ms` }}
+                      onClick={() => handleRowClick(user.id)}
+                    >
+                      <TableCell className="h-[97px]">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="gap-1.5 whitespace-nowrap"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRowClick(user.id);
+                          }}
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                          View Details
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
+          </div>
         </div>
       </main>
     </div>
