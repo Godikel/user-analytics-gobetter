@@ -22,6 +22,7 @@ interface Module {
   distributionType: "Independent" | "Automatic";
   version: string;
   autoDistributionGroup: string | null;
+  enforced: "No" | "Hard" | "Soft";
 }
 
 // Generate sample modules data
@@ -44,6 +45,8 @@ const generateModules = (count: number): Module[] => {
   const trainers = ["John Smith", "Sarah Wilson", "Mike Chen", "Lisa Kumar", "David Park"];
   const autoDistGroups = ["New Hires 2024", "Sales Team Q1", "Engineering Onboarding", "Leadership Track", "Compliance Annual"];
 
+  const enforcedOptions: Module["enforced"][] = ["No", "Hard", "Soft"];
+
   return Array.from({ length: count }, (_, i) => {
     const isAutomatic = i % 2 !== 0;
     return {
@@ -60,6 +63,7 @@ const generateModules = (count: number): Module[] => {
       distributionType: isAutomatic ? "Automatic" : "Independent",
       version: `v${Math.floor(Math.random() * 3) + 1}.${Math.floor(Math.random() * 10)}`,
       autoDistributionGroup: isAutomatic ? autoDistGroups[i % autoDistGroups.length] : null,
+      enforced: enforcedOptions[i % enforcedOptions.length],
     };
   });
 };
@@ -80,6 +84,7 @@ type SortDirection = "asc" | "desc";
 export function UserModulesTable({ showTypeColumn = true, title = "All Modules", filterByType, idColumnLabel, hideDistributionTypeAndVersion = false }: UserModulesTableProps) {
   const [distributionTypeFilter, setDistributionTypeFilter] = useState<string>("all");
   const [versionFilter, setVersionFilter] = useState<string>("all");
+  const [enforcedFilter, setEnforcedFilter] = useState<string>("all");
 
   // Get unique versions for the filter
   const uniqueVersions = [...new Set(modules.map(m => m.version))].sort();
@@ -129,8 +134,9 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
     const matchesStatus = statusFilter === "all" || module.completionStatus === statusFilter;
     const matchesDistributionType = distributionTypeFilter === "all" || module.distributionType === distributionTypeFilter;
     const matchesVersion = versionFilter === "all" || module.version === versionFilter;
+    const matchesEnforced = enforcedFilter === "all" || module.enforced === enforcedFilter;
 
-    return matchesSearch && matchesType && matchesStatus && matchesDistributionType && matchesVersion;
+    return matchesSearch && matchesType && matchesStatus && matchesDistributionType && matchesVersion && matchesEnforced;
   });
 
   const sortedModules = [...filteredModules].sort((a, b) => {
@@ -303,6 +309,22 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                     </div>
                   </TableHead>
                 )}
+                <TableHead className="font-semibold min-w-[120px]">
+                  <div className="space-y-2">
+                    <span>Enforced</span>
+                    <Select value={enforcedFilter} onValueChange={setEnforcedFilter}>
+                      <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
+                        <SelectValue placeholder="All" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="No">No</SelectItem>
+                        <SelectItem value="Hard">Hard</SelectItem>
+                        <SelectItem value="Soft">Soft</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Coins</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Rating</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Edit</TableHead>
@@ -356,6 +378,18 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                   {!hideDistributionTypeAndVersion && (
                     <TableCell className="font-mono text-xs">{module.version}</TableCell>
                   )}
+                  <TableCell>
+                    <Badge variant="outline" className={cn(
+                      "text-xs whitespace-nowrap",
+                      module.enforced === "Hard" 
+                        ? "bg-destructive/20 text-destructive border-destructive/30" 
+                        : module.enforced === "Soft"
+                        ? "bg-journeys/20 text-journeys border-journeys/30"
+                        : "bg-muted text-muted-foreground border-muted"
+                    )}>
+                      {module.enforced}
+                    </Badge>
+                  </TableCell>
                   <TableCell className="font-mono text-journeys">{module.coins}</TableCell>
                   <TableCell>
                     {module.feedbackRating ? (
