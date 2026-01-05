@@ -109,7 +109,7 @@ const UserAnalytics = () => {
             </TabsContent>
 
             <TabsContent value="ilts" className="mt-6">
-              <UserModulesTable showTypeColumn={false} title="ILTs" filterByType="ILT" idColumnLabel="ILT ID" />
+              <UserModulesTable showTypeColumn={false} title="ILTs" filterByType="ILT" idColumnLabel="ILT ID" hideDistributionTypeAndVersion={true} />
             </TabsContent>
 
             <TabsContent value="feeds" className="mt-6">
