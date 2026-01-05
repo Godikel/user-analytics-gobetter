@@ -7,12 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { users } from "@/data/users";
-import { Search, MapPin, Mail, Clock, Users } from "lucide-react";
+import { Search, MapPin, Mail, Clock, Users, ArrowDownAZ, CalendarPlus } from "lucide-react";
+
+type SortOption = "alphabetical" | "latest";
 
 const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<SortOption>("alphabetical");
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
@@ -24,6 +27,25 @@ const UserManagement = () => {
     const matchesRole = roleFilter === "all" || user.role === roleFilter;
 
     return matchesSearch && matchesStatus && matchesRole;
+  });
+
+  const sortedUsers = [...filteredUsers].sort((a, b) => {
+    if (sortBy === "alphabetical") {
+      return a.name.localeCompare(b.name);
+    } else {
+      // Parse "15 Dec 2024, 3:45 PM" format for latest added (createdOn)
+      const parseDate = (dateStr: string): Date => {
+        const match = dateStr.match(/(\d+) (\w+) (\d+), (\d+):(\d+) (AM|PM)/);
+        if (!match) return new Date(0);
+        const [, day, month, year, hours, mins, ampm] = match;
+        const monthIndex = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].indexOf(month);
+        let hour = parseInt(hours);
+        if (ampm === "PM" && hour !== 12) hour += 12;
+        if (ampm === "AM" && hour === 12) hour = 0;
+        return new Date(parseInt(year), monthIndex, parseInt(day), hour, parseInt(mins));
+      };
+      return parseDate(b.createdOn).getTime() - parseDate(a.createdOn).getTime();
+    }
   });
 
   const uniqueRoles = [...new Set(users.map(u => u.role))];
@@ -97,17 +119,36 @@ const UserManagement = () => {
                   ))}
                 </SelectContent>
               </Select>
+              <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
+                <SelectTrigger className="w-[180px] bg-card border-border">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="alphabetical">
+                    <div className="flex items-center gap-2">
+                      <ArrowDownAZ className="h-4 w-4" />
+                      <span>Alphabetical</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="latest">
+                    <div className="flex items-center gap-2">
+                      <CalendarPlus className="h-4 w-4" />
+                      <span>Latest Added</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Users className="h-4 w-4" />
-              <span>{filteredUsers.length} users found</span>
+              <span>{sortedUsers.length} users found</span>
             </div>
           </div>
 
           {/* User Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredUsers.map((user, index) => (
+            {sortedUsers.map((user, index) => (
               <Link key={user.id} to={`/users/${user.id}`}>
                 <Card 
                   variant="elevated" 
