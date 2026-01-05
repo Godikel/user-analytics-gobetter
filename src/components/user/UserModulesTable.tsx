@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Download, ArrowUp, ArrowDown } from "lucide-react";
+import { Search, Download, ArrowUp, ArrowDown, ExternalLink, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Module {
@@ -21,6 +21,7 @@ interface Module {
   feedbackRating: number | null;
   distributionType: "Independent" | "Automatic";
   version: string;
+  autoDistributionGroup: string | null;
 }
 
 // Generate sample modules data
@@ -41,21 +42,26 @@ const generateModules = (count: number): Module[] => {
     "Sales Excellence", "Technical Writing", "Design Thinking", "Agile Methodology"
   ];
   const trainers = ["John Smith", "Sarah Wilson", "Mike Chen", "Lisa Kumar", "David Park"];
+  const autoDistGroups = ["New Hires 2024", "Sales Team Q1", "Engineering Onboarding", "Leadership Track", "Compliance Annual"];
 
-  return Array.from({ length: count }, (_, i) => ({
-    id: `MOD${String(i + 1).padStart(4, '0')}`,
-    name: names[i % names.length],
-    type: types[i % types.length],
-    distributionDate: generateDateTime(),
-    completionStatus: statuses[Math.floor(Math.random() * statuses.length)],
-    startDate: statuses[i % 3] === "Not Started" ? "-" : generateDateTime(),
-    completionDate: statuses[i % 3] === "Completed" ? generateDateTime() : "-",
-    trainer: trainers[i % trainers.length],
-    coins: Math.floor(Math.random() * 100) + 10,
-    feedbackRating: statuses[i % 3] === "Completed" ? Math.floor(Math.random() * 5) + 1 : null,
-    distributionType: i % 2 === 0 ? "Independent" : "Automatic",
-    version: `v${Math.floor(Math.random() * 3) + 1}.${Math.floor(Math.random() * 10)}`,
-  }));
+  return Array.from({ length: count }, (_, i) => {
+    const isAutomatic = i % 2 !== 0;
+    return {
+      id: `MOD${String(i + 1).padStart(4, '0')}`,
+      name: names[i % names.length],
+      type: types[i % types.length],
+      distributionDate: generateDateTime(),
+      completionStatus: statuses[Math.floor(Math.random() * statuses.length)],
+      startDate: statuses[i % 3] === "Not Started" ? "-" : generateDateTime(),
+      completionDate: statuses[i % 3] === "Completed" ? generateDateTime() : "-",
+      trainer: trainers[i % trainers.length],
+      coins: Math.floor(Math.random() * 100) + 10,
+      feedbackRating: statuses[i % 3] === "Completed" ? Math.floor(Math.random() * 5) + 1 : null,
+      distributionType: isAutomatic ? "Automatic" : "Independent",
+      version: `v${Math.floor(Math.random() * 3) + 1}.${Math.floor(Math.random() * 10)}`,
+      autoDistributionGroup: isAutomatic ? autoDistGroups[i % autoDistGroups.length] : null,
+    };
+  });
 };
 
 const modules = generateModules(25);
@@ -296,6 +302,7 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                 )}
                 <TableHead className="font-semibold whitespace-nowrap">Coins</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Rating</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -341,6 +348,20 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                     ) : (
                       <span className="text-muted-foreground text-xs">-</span>
                     )}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {module.distributionType === "Automatic" && module.autoDistributionGroup && (
+                        <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
+                          <Users className="h-3 w-3" />
+                          {module.autoDistributionGroup}
+                        </Button>
+                      )}
+                      <Button variant="ghost" size="sm" className="h-7 text-xs gap-1">
+                        <ExternalLink className="h-3 w-3" />
+                        Go to module
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
