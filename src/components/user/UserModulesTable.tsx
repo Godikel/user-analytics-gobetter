@@ -283,6 +283,9 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                   </TableHead>
                 )}
                 {!hideDistributionTypeAndVersion && (
+                  <TableHead className="font-semibold whitespace-nowrap">Auto-dist Group</TableHead>
+                )}
+                {!hideDistributionTypeAndVersion && (
                   <TableHead className="font-semibold min-w-[120px]">
                     <div className="space-y-2">
                       <span>Version</span>
@@ -299,9 +302,6 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                       </Select>
                     </div>
                   </TableHead>
-                )}
-                {!hideDistributionTypeAndVersion && (
-                  <TableHead className="font-semibold whitespace-nowrap">Auto-dist Group</TableHead>
                 )}
                 <TableHead className="font-semibold whitespace-nowrap">Coins</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Rating</TableHead>
@@ -342,9 +342,6 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                     </TableCell>
                   )}
                   {!hideDistributionTypeAndVersion && (
-                    <TableCell className="font-mono text-xs">{module.version}</TableCell>
-                  )}
-                  {!hideDistributionTypeAndVersion && (
                     <TableCell>
                       {module.distributionType === "Automatic" && module.autoDistributionGroup ? (
                         <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
@@ -355,6 +352,9 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                         <span className="text-muted-foreground text-xs">-</span>
                       )}
                     </TableCell>
+                  )}
+                  {!hideDistributionTypeAndVersion && (
+                    <TableCell className="font-mono text-xs">{module.version}</TableCell>
                   )}
                   <TableCell className="font-mono text-journeys">{module.coins}</TableCell>
                   <TableCell>
