@@ -65,12 +65,18 @@ interface UserModulesTableProps {
   title?: string;
   filterByType?: Module["type"];
   idColumnLabel?: string;
+  hideDistributionTypeAndVersion?: boolean;
 }
 
 type SortColumn = "distributionDate" | "startDate" | "completionDate" | null;
 type SortDirection = "asc" | "desc";
 
-export function UserModulesTable({ showTypeColumn = true, title = "All Modules", filterByType, idColumnLabel }: UserModulesTableProps) {
+export function UserModulesTable({ showTypeColumn = true, title = "All Modules", filterByType, idColumnLabel, hideDistributionTypeAndVersion = false }: UserModulesTableProps) {
+  const [distributionTypeFilter, setDistributionTypeFilter] = useState<string>("all");
+  const [versionFilter, setVersionFilter] = useState<string>("all");
+
+  // Get unique versions for the filter
+  const uniqueVersions = [...new Set(modules.map(m => m.version))].sort();
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -115,8 +121,10 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
     
     const matchesType = typeFilter === "all" || module.type === typeFilter;
     const matchesStatus = statusFilter === "all" || module.completionStatus === statusFilter;
+    const matchesDistributionType = distributionTypeFilter === "all" || module.distributionType === distributionTypeFilter;
+    const matchesVersion = versionFilter === "all" || module.version === versionFilter;
 
-    return matchesSearch && matchesType && matchesStatus;
+    return matchesSearch && matchesType && matchesStatus && matchesDistributionType && matchesVersion;
   });
 
   const sortedModules = [...filteredModules].sort((a, b) => {
@@ -251,6 +259,41 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                   </div>
                 </TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Trainer</TableHead>
+                {!hideDistributionTypeAndVersion && (
+                  <TableHead className="font-semibold min-w-[160px]">
+                    <div className="space-y-2">
+                      <span>Distribution Type</span>
+                      <Select value={distributionTypeFilter} onValueChange={setDistributionTypeFilter}>
+                        <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
+                          <SelectValue placeholder="All Types" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Types</SelectItem>
+                          <SelectItem value="Independent">Independent</SelectItem>
+                          <SelectItem value="Automatic">Automatic</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </TableHead>
+                )}
+                {!hideDistributionTypeAndVersion && (
+                  <TableHead className="font-semibold min-w-[120px]">
+                    <div className="space-y-2">
+                      <span>Version</span>
+                      <Select value={versionFilter} onValueChange={setVersionFilter}>
+                        <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
+                          <SelectValue placeholder="All Versions" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Versions</SelectItem>
+                          {uniqueVersions.map(version => (
+                            <SelectItem key={version} value={version}>{version}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </TableHead>
+                )}
                 <TableHead className="font-semibold whitespace-nowrap">Coins</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Rating</TableHead>
               </TableRow>
@@ -276,6 +319,21 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                   <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{module.startDate}</TableCell>
                   <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{module.completionDate}</TableCell>
                   <TableCell className="text-sm whitespace-nowrap">{module.trainer}</TableCell>
+                  {!hideDistributionTypeAndVersion && (
+                    <TableCell>
+                      <Badge variant="outline" className={cn(
+                        "text-xs whitespace-nowrap",
+                        module.distributionType === "Automatic" 
+                          ? "bg-journeys/20 text-journeys border-journeys/30" 
+                          : "bg-muted text-muted-foreground border-muted"
+                      )}>
+                        {module.distributionType}
+                      </Badge>
+                    </TableCell>
+                  )}
+                  {!hideDistributionTypeAndVersion && (
+                    <TableCell className="font-mono text-xs">{module.version}</TableCell>
+                  )}
                   <TableCell className="font-mono text-journeys">{module.coins}</TableCell>
                   <TableCell>
                     {module.feedbackRating ? (
