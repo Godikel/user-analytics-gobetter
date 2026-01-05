@@ -34,9 +34,9 @@ const generateDateTime = (): string => {
   return `${day} Dec 2024, ${hours}:${mins.toString().padStart(2, '0')} ${ampm}`;
 };
 
-const generateModules = (count: number): Module[] => {
-  const types: Module["type"][] = ["Course", "Assessment", "Survey", "Learning Journey", "ILT"];
-  const statuses: Module["completionStatus"][] = ["Completed", "Ongoing", "Not Started"];
+import { moduleStats } from "@/data/moduleData";
+
+const generateModulesForType = (type: Module["type"], total: number, completed: number): Module[] => {
   const names = [
     "Leadership Fundamentals", "Data Analytics 101", "Project Management", "Communication Skills",
     "Strategic Thinking", "Team Collaboration", "Customer Focus", "Innovation Mindset",
@@ -44,22 +44,25 @@ const generateModules = (count: number): Module[] => {
   ];
   const trainers = ["John Smith", "Sarah Wilson", "Mike Chen", "Lisa Kumar", "David Park"];
   const autoDistGroups = ["New Hires 2024", "Sales Team Q1", "Engineering Onboarding", "Leadership Track", "Compliance Annual"];
-
   const enforcedOptions: Module["enforced"][] = ["No", "Hard", "Soft"];
+  const prefix = type === "Course" ? "CRS" : type === "Assessment" ? "ASM" : type === "Survey" ? "SRV" : type === "Learning Journey" ? "LRJ" : type === "ILT" ? "ILT" : "FED";
 
-  return Array.from({ length: count }, (_, i) => {
+  return Array.from({ length: total }, (_, i) => {
     const isAutomatic = i % 2 !== 0;
+    // Distribute statuses: first 'completed' items are Completed, rest are Ongoing or Not Started
+    const status: Module["completionStatus"] = i < completed ? "Completed" : (i < completed + Math.floor((total - completed) / 2) ? "Ongoing" : "Not Started");
+    
     return {
-      id: `MOD${String(i + 1).padStart(4, '0')}`,
+      id: `${prefix}${String(i + 1).padStart(4, '0')}`,
       name: names[i % names.length],
-      type: types[i % types.length],
+      type: type,
       distributionDate: generateDateTime(),
-      completionStatus: statuses[Math.floor(Math.random() * statuses.length)],
-      startDate: statuses[i % 3] === "Not Started" ? "-" : generateDateTime(),
-      completionDate: statuses[i % 3] === "Completed" ? generateDateTime() : "-",
+      completionStatus: status,
+      startDate: status === "Not Started" ? "-" : generateDateTime(),
+      completionDate: status === "Completed" ? generateDateTime() : "-",
       trainer: trainers[i % trainers.length],
       coins: Math.floor(Math.random() * 100) + 10,
-      feedbackRating: statuses[i % 3] === "Completed" ? Math.floor(Math.random() * 5) + 1 : null,
+      feedbackRating: status === "Completed" ? Math.floor(Math.random() * 5) + 1 : null,
       distributionType: isAutomatic ? "Automatic" : "Independent",
       version: `v${Math.floor(Math.random() * 3) + 1}.${Math.floor(Math.random() * 10)}`,
       autoDistributionGroup: isAutomatic ? autoDistGroups[i % autoDistGroups.length] : null,
@@ -68,7 +71,14 @@ const generateModules = (count: number): Module[] => {
   });
 };
 
-const modules = generateModules(25);
+// Generate modules for each type based on moduleStats
+const modules: Module[] = [
+  ...generateModulesForType("Course", moduleStats.courses.distributed, moduleStats.courses.completed),
+  ...generateModulesForType("Assessment", moduleStats.assessments.distributed, moduleStats.assessments.completed),
+  ...generateModulesForType("Survey", moduleStats.surveys.distributed, moduleStats.surveys.completed),
+  ...generateModulesForType("Learning Journey", moduleStats.learningJourneys.distributed, moduleStats.learningJourneys.completed),
+  ...generateModulesForType("ILT", moduleStats.ilts.distributed, moduleStats.ilts.completed),
+];
 
 interface UserModulesTableProps {
   showTypeColumn?: boolean;

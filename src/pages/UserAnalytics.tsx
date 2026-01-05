@@ -75,7 +75,7 @@ const UserAnalytics = () => {
           <UserProfileHeader user={user} />
 
           {/* Module Stats */}
-          <ModuleStatsGrid modules={user.modules} onModuleClick={handleModuleClick} />
+          <ModuleStatsGrid onModuleClick={handleModuleClick} />
 
           {/* Tabs for Different Views */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="animate-slide-up" style={{ animationDelay: "150ms" }} ref={tabsRef}>
