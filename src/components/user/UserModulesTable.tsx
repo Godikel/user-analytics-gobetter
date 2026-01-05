@@ -300,9 +300,12 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                     </div>
                   </TableHead>
                 )}
+                {!hideDistributionTypeAndVersion && (
+                  <TableHead className="font-semibold whitespace-nowrap">Auto-dist Group</TableHead>
+                )}
                 <TableHead className="font-semibold whitespace-nowrap">Coins</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Rating</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Actions</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Edit</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -341,6 +344,18 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                   {!hideDistributionTypeAndVersion && (
                     <TableCell className="font-mono text-xs">{module.version}</TableCell>
                   )}
+                  {!hideDistributionTypeAndVersion && (
+                    <TableCell>
+                      {module.distributionType === "Automatic" && module.autoDistributionGroup ? (
+                        <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
+                          <Users className="h-3 w-3" />
+                          {module.autoDistributionGroup}
+                        </Button>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">-</span>
+                      )}
+                    </TableCell>
+                  )}
                   <TableCell className="font-mono text-journeys">{module.coins}</TableCell>
                   <TableCell>
                     {module.feedbackRating ? (
@@ -350,18 +365,10 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                     )}
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
-                      {module.distributionType === "Automatic" && module.autoDistributionGroup && (
-                        <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
-                          <Users className="h-3 w-3" />
-                          {module.autoDistributionGroup}
-                        </Button>
-                      )}
-                      <Button variant="ghost" size="sm" className="h-7 text-xs gap-1">
-                        <ExternalLink className="h-3 w-3" />
-                        Go to module
-                      </Button>
-                    </div>
+                    <Button variant="ghost" size="sm" className="h-7 text-xs gap-1">
+                      <ExternalLink className="h-3 w-3" />
+                      Go to module
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
