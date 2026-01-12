@@ -296,7 +296,7 @@ export function AssessmentsTable() {
                     </Select>
                   </div>
                 </TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Auto-dist Group</TableHead>
+                
                 <TableHead className="font-semibold min-w-[120px]">
                   <div className="space-y-2">
                     <span>Version</span>
@@ -390,16 +390,6 @@ export function AssessmentsTable() {
                     )}>
                       {assessment.distributionType}
                     </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {assessment.distributionType === "Automatic" && assessment.autoDistributionGroup ? (
-                      <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
-                        <Users className="h-3 w-3" />
-                        {assessment.autoDistributionGroup}
-                      </Button>
-                    ) : (
-                      <span className="text-muted-foreground text-xs">-</span>
-                    )}
                   </TableCell>
                   <TableCell className="font-mono text-xs">{assessment.version}</TableCell>
                   <TableCell>

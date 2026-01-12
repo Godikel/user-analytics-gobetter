@@ -511,7 +511,7 @@ export function CoursesTable() {
                   </div>
                 </TableHead>
 
-                <TableHead className="font-semibold whitespace-nowrap min-w-[150px]">Auto-Dist Group</TableHead>
+                
                 <TableHead className="font-semibold whitespace-nowrap min-w-[120px]">Tags</TableHead>
 
                 {/* Enforced - Filter */}
@@ -587,16 +587,6 @@ export function CoursesTable() {
                     <Badge variant="outline" className="text-xs">
                       {course.distributionType}
                     </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {course.distributionType === "Automatic" ? (
-                      <Button variant="link" size="sm" className="h-auto p-0 text-xs text-primary gap-1">
-                        {course.autoDistributionGroup}
-                        <ExternalLink className="h-3 w-3" />
-                      </Button>
-                    ) : (
-                      <span className="text-muted-foreground text-xs">-</span>
-                    )}
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
