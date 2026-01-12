@@ -258,7 +258,7 @@ const UserManagement = () => {
                 <TableHead className="font-semibold whitespace-nowrap text-center">Live Classes</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-center">Feeds</TableHead>
 
-                <TableHead className="font-semibold whitespace-nowrap sticky right-0 bg-secondary/50 border-l border-border z-20 min-w-[160px] w-[160px]">
+                <TableHead className="font-semibold whitespace-nowrap sticky right-0 bg-secondary border-l border-border z-20 min-w-[160px] w-[160px] shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]">
                   <div className="space-y-2">
                     <span>Actions</span>
                     <div className="h-7" />
@@ -348,7 +348,7 @@ const UserManagement = () => {
                       {renderModuleStatus(user.modules.feeds.completed, user.modules.feeds.distributed)}
                     </TableCell>
 
-                    <TableCell className="sticky right-0 bg-card group-hover:bg-secondary/30 border-l border-border z-20 min-w-[160px] w-[160px]">
+                    <TableCell className="sticky right-0 bg-card group-hover:bg-muted border-l border-border z-20 min-w-[160px] w-[160px] shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]">
                       <Button
                         variant="outline"
                         size="sm"
