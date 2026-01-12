@@ -299,9 +299,6 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                   </TableHead>
                 )}
                 {!hideDistributionTypeAndVersion && (
-                  <TableHead className="font-semibold whitespace-nowrap">Auto-dist Group</TableHead>
-                )}
-                {!hideDistributionTypeAndVersion && (
                   <TableHead className="font-semibold min-w-[120px]">
                     <div className="space-y-2">
                       <span>Version</span>
@@ -371,18 +368,6 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                       )}>
                         {module.distributionType}
                       </Badge>
-                    </TableCell>
-                  )}
-                  {!hideDistributionTypeAndVersion && (
-                    <TableCell>
-                      {module.distributionType === "Automatic" && module.autoDistributionGroup ? (
-                        <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
-                          <Users className="h-3 w-3" />
-                          {module.autoDistributionGroup}
-                        </Button>
-                      ) : (
-                        <span className="text-muted-foreground text-xs">-</span>
-                      )}
                     </TableCell>
                   )}
                   {!hideDistributionTypeAndVersion && (
