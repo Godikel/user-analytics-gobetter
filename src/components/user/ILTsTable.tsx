@@ -12,6 +12,8 @@ import { moduleStats } from "@/data/moduleData";
 interface ILT {
   id: string;
   name: string;
+  type: string;
+  subType: string;
   distributionDate: string;
   attendanceStatus: "Attended" | "Not Attended";
   startDate: string;
@@ -40,6 +42,8 @@ const generateILTs = (): ILT[] => {
     "Product Launch Training", "Customer Service Excellence", "Safety Workshop", "Compliance Training",
     "Agile Methodology", "Design Thinking Workshop", "Innovation Lab", "Strategy Session"
   ];
+  const types = ["Classroom", "Virtual", "Hybrid", "On-site"];
+  const subTypes = ["Workshop", "Seminar", "Bootcamp", "Webinar", "Conference", "Training Session"];
   const trainers = ["John Smith", "Sarah Wilson", "Mike Chen", "Lisa Kumar", "David Park"];
   const feedbackOptions = [
     "Great session, very informative",
@@ -59,6 +63,8 @@ const generateILTs = (): ILT[] => {
     return {
       id: `ILT${String(i + 1).padStart(4, '0')}`,
       name: names[i % names.length],
+      type: types[i % types.length],
+      subType: subTypes[i % subTypes.length],
       distributionDate: generateDateTime(),
       attendanceStatus: isAttended ? "Attended" : "Not Attended",
       startDate: isAttended ? generateDateTime() : "-",
@@ -164,7 +170,7 @@ export function ILTsTable() {
       </CardHeader>
       <CardContent>
         <div className="rounded-lg border border-border overflow-x-auto">
-          <Table className="min-w-[900px]">
+          <Table className="min-w-[1100px]">
             <TableHeader>
               <TableRow className="bg-secondary/50 hover:bg-secondary/50">
                 <TableHead className="font-semibold whitespace-nowrap">ILT ID</TableHead>
@@ -182,6 +188,8 @@ export function ILTsTable() {
                     </div>
                   </div>
                 </TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Type</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Sub-type</TableHead>
                 <TableHead className="font-semibold min-w-[140px]">
                   <div className="space-y-2">
                     <span>Status</span>
@@ -258,6 +266,8 @@ export function ILTsTable() {
                 <TableRow key={ilt.id} className="hover:bg-secondary/30">
                   <TableCell className="font-mono text-xs whitespace-nowrap">{ilt.id}</TableCell>
                   <TableCell className="font-medium">{ilt.name}</TableCell>
+                  <TableCell className="text-sm whitespace-nowrap">{ilt.type}</TableCell>
+                  <TableCell className="text-sm whitespace-nowrap">{ilt.subType}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className={cn("text-xs whitespace-nowrap", getStatusColor(ilt.attendanceStatus))}>
                       {ilt.attendanceStatus}
