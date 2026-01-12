@@ -88,7 +88,7 @@ const UserAnalytics = () => {
               <TabsTrigger value="surveys">Surveys</TabsTrigger>
               <TabsTrigger value="journeys">Learning Journeys</TabsTrigger>
               <TabsTrigger value="ilts">ILTs</TabsTrigger>
-              <TabsTrigger value="feeds">Feeds</TabsTrigger>
+              
             </TabsList>
 
             <TabsContent value="modules" className="mt-6">
@@ -115,9 +115,7 @@ const UserAnalytics = () => {
               <ILTsTable />
             </TabsContent>
 
-            <TabsContent value="feeds" className="mt-6">
-              <UserModulesTable showTypeColumn={false} title="Feeds" idColumnLabel="Feed ID" />
-            </TabsContent>
+            
           </Tabs>
       </main>
     </div>
