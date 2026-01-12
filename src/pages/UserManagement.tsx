@@ -328,38 +328,34 @@ const UserManagement = () => {
             
             {/* Fixed Action Column */}
             <div className="border-l border-border bg-card shrink-0">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-secondary/50 hover:bg-secondary/50">
-                    <TableHead className="font-semibold whitespace-nowrap h-[76px] flex items-end pb-2">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sortedUsers.map((user, index) => (
-                    <TableRow 
-                      key={user.id} 
-                      className="hover:bg-secondary/30 cursor-pointer animate-slide-up h-[97px]"
-                      style={{ animationDelay: `${Math.min(index * 20, 200)}ms` }}
-                      onClick={() => handleRowClick(user.id)}
+              {/* Header */}
+              <div className="bg-secondary/50 h-[69px] flex items-end pb-3 px-4 border-b border-border">
+                <span className="font-semibold text-sm text-muted-foreground">Actions</span>
+              </div>
+              {/* Body */}
+              <div>
+                {sortedUsers.map((user, index) => (
+                  <div 
+                    key={user.id} 
+                    className="h-[97px] flex items-center px-4 border-b border-border hover:bg-secondary/30 cursor-pointer animate-slide-up"
+                    style={{ animationDelay: `${Math.min(index * 20, 200)}ms` }}
+                    onClick={() => handleRowClick(user.id)}
+                  >
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="gap-1.5 whitespace-nowrap"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRowClick(user.id);
+                      }}
                     >
-                      <TableCell className="h-[97px]">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="gap-1.5 whitespace-nowrap"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRowClick(user.id);
-                          }}
-                        >
-                          <ExternalLink className="h-3.5 w-3.5" />
-                          View Details
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      View Details
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
