@@ -7,6 +7,7 @@ import { UserModulesTable } from "@/components/user/UserModulesTable";
 import { CoursesTable } from "@/components/user/CoursesTable";
 import { AssessmentsTable } from "@/components/user/AssessmentsTable";
 import { PlaylistModulesTable } from "@/components/user/PlaylistModulesTable";
+import { ILTsTable } from "@/components/user/ILTsTable";
 import { getUserById } from "@/data/users";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, RefreshCw, Settings } from "lucide-react";
@@ -111,7 +112,7 @@ const UserAnalytics = () => {
             </TabsContent>
 
             <TabsContent value="ilts" className="mt-6">
-              <UserModulesTable showTypeColumn={false} title="ILTs" filterByType="ILT" idColumnLabel="ILT ID" hideDistributionTypeAndVersion={true} />
+              <ILTsTable />
             </TabsContent>
 
             <TabsContent value="feeds" className="mt-6">
