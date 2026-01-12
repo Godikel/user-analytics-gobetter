@@ -21,6 +21,7 @@ interface PlaylistItem {
 interface Playlist {
   id: string;
   name: string;
+  language: string;
   state: "Published" | "Draft" | "Archived";
   coursesCount: number;
   assessmentsCount: number;
@@ -105,6 +106,8 @@ const generatePlaylistItems = (coursesCount: number, assessmentsCount: number, s
   return items;
 };
 
+const languages = ["English", "Hindi", "Spanish", "French", "German", "Mandarin", "Japanese", "Portuguese"];
+
 const generatePlaylists = (): Playlist[] => {
   const total = moduleStats.learningJourneys.distributed;
   const completed = moduleStats.learningJourneys.completed;
@@ -120,6 +123,7 @@ const generatePlaylists = (): Playlist[] => {
     return {
       id: `PLY${String(i + 1).padStart(4, '0')}`,
       name: playlistNames[i % playlistNames.length],
+      language: languages[i % languages.length],
       state: states[i % states.length],
       coursesCount,
       assessmentsCount,
@@ -239,7 +243,7 @@ export function PlaylistModulesTable() {
       </CardHeader>
       <CardContent>
         <div className="rounded-lg border border-border overflow-x-auto">
-          <Table className="min-w-[900px]">
+          <Table className="min-w-[1000px]">
             <TableHeader>
               <TableRow className="bg-secondary/50 hover:bg-secondary/50">
                 <TableHead className="w-[40px]"></TableHead>
@@ -258,6 +262,7 @@ export function PlaylistModulesTable() {
                     </div>
                   </div>
                 </TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Language</TableHead>
                 <TableHead className="font-semibold min-w-[120px]">
                   <div className="space-y-2">
                     <span>State</span>
@@ -341,6 +346,7 @@ export function PlaylistModulesTable() {
                       </TableCell>
                       <TableCell className="font-mono text-xs whitespace-nowrap">{playlist.id}</TableCell>
                       <TableCell className="font-medium">{playlist.name}</TableCell>
+                      <TableCell className="text-sm whitespace-nowrap">{playlist.language}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className={cn("text-xs whitespace-nowrap", getStateColor(playlist.state))}>
                           {playlist.state}
@@ -376,7 +382,7 @@ export function PlaylistModulesTable() {
                     </TableRow>
                     <CollapsibleContent asChild>
                       <TableRow className="bg-secondary/20 hover:bg-secondary/30">
-                        <TableCell colSpan={11} className="p-0">
+                        <TableCell colSpan={12} className="p-0">
                           <div className="px-8 py-4">
                             <h4 className="text-sm font-medium mb-3 text-muted-foreground">Playlist Contents</h4>
                             <div className="rounded-md border border-border overflow-hidden">
