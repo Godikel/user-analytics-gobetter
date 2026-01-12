@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { users } from "@/data/users";
 import { Search, Users, ArrowDownAZ, CalendarPlus, ExternalLink, Phone, Mail } from "lucide-react";
 
@@ -182,182 +181,192 @@ const UserManagement = () => {
           </div>
         </div>
 
-        {/* Users Table with Horizontal Scroll and Fixed Action Column */}
+        {/* Users Table with Horizontal Scroll + Sticky Actions Column */}
         <div className="rounded-lg border border-border bg-card relative">
-          <div className="flex">
-            {/* Scrollable Table Area */}
-            <ScrollArea className="flex-1">
-              <div className="min-w-[1200px]">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-secondary/50 hover:bg-secondary/50">
-                      <TableHead className="font-semibold min-w-[220px]">
-                        <div className="space-y-2">
-                          <span>User</span>
-                          <div className="relative">
-                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
-                            <Input
-                              placeholder="Search..."
-                              value={nameSearch}
-                              onChange={(e) => setNameSearch(e.target.value)}
-                              className="pl-7 h-7 text-xs bg-background/50 border-border"
-                            />
-                          </div>
-                        </div>
-                      </TableHead>
-                      <TableHead className="font-semibold min-w-[100px]">
-                        <div className="space-y-2">
-                          <span>User ID</span>
-                          <Input
-                            placeholder="Filter..."
-                            value={userIdSearch}
-                            onChange={(e) => setUserIdSearch(e.target.value)}
-                            className="h-7 text-xs bg-background/50 border-border"
-                          />
-                        </div>
-                      </TableHead>
-                      <TableHead className="font-semibold min-w-[160px]">
-                        <div className="space-y-2">
-                          <span>Role</span>
-                          <Select value={roleColumnFilter} onValueChange={setRoleColumnFilter}>
-                            <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
-                              <SelectValue placeholder="All Roles" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all">All Roles</SelectItem>
-                              {uniqueRoles.map(role => (
-                                <SelectItem key={role} value={role}>{role}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </TableHead>
-                      <TableHead className="font-semibold min-w-[120px]">
-                        <div className="space-y-2">
-                          <span>Status</span>
-                          <Select value={statusColumnFilter} onValueChange={setStatusColumnFilter}>
-                            <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
-                              <SelectValue placeholder="All" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all">All Status</SelectItem>
-                              <SelectItem value="Active">Active</SelectItem>
-                              <SelectItem value="Hired">Hired</SelectItem>
-                              <SelectItem value="Inactive">Inactive</SelectItem>
-                              <SelectItem value="Terminated">Terminated</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </TableHead>
-                      <TableHead className="font-semibold whitespace-nowrap text-center">Courses</TableHead>
-                      <TableHead className="font-semibold whitespace-nowrap text-center">Assessments</TableHead>
-                      <TableHead className="font-semibold whitespace-nowrap text-center">Surveys</TableHead>
-                      <TableHead className="font-semibold whitespace-nowrap text-center">Playlists</TableHead>
-                      <TableHead className="font-semibold whitespace-nowrap text-center">Live Classes</TableHead>
-                      <TableHead className="font-semibold whitespace-nowrap text-center">Feeds</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedUsers.map((user, index) => {
-                      const totalCompleted = Object.values(user.modules).reduce((acc, m) => acc + m.completed, 0);
-                      const totalDistributed = Object.values(user.modules).reduce((acc, m) => acc + m.distributed, 0);
-                      const overallProgress = totalDistributed > 0 ? (totalCompleted / totalDistributed) * 100 : 0;
+          {/* Table component already provides horizontal scrolling via its wrapper */}
+          <Table className="min-w-[1320px]">
+            <TableHeader>
+              <TableRow className="bg-secondary/50 hover:bg-secondary/50">
+                <TableHead className="font-semibold min-w-[220px]">
+                  <div className="space-y-2">
+                    <span>User</span>
+                    <div className="relative">
+                      <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                      <Input
+                        placeholder="Search..."
+                        value={nameSearch}
+                        onChange={(e) => setNameSearch(e.target.value)}
+                        className="pl-7 h-7 text-xs bg-background/50 border-border"
+                      />
+                    </div>
+                  </div>
+                </TableHead>
 
-                      return (
-                        <TableRow 
-                          key={user.id} 
-                          className="hover:bg-secondary/30 cursor-pointer animate-slide-up"
-                          style={{ animationDelay: `${Math.min(index * 20, 200)}ms` }}
-                          onClick={() => handleRowClick(user.id)}
-                        >
-                          <TableCell>
-                            <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shrink-0">
-                                  <span className="text-xs font-semibold text-primary">
-                                    {user.name.split(" ").map(n => n[0]).join("").toUpperCase()}
-                                  </span>
-                                </div>
-                                <div className="flex flex-col min-w-0">
-                                  <span className="font-medium text-sm truncate">{user.name}</span>
-                                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                                    <Phone className="h-2.5 w-2.5 shrink-0" />
-                                    <span className="truncate">{user.phone}</span>
-                                  </div>
-                                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                                    <Mail className="h-2.5 w-2.5 shrink-0" />
-                                    <span className="truncate">{user.email}</span>
-                                  </div>
-                                </div>
-                              </div>
-                              {/* Overall Progress Bar */}
-                              <div className="flex items-center gap-2 mt-1">
-                                <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
-                                  <div 
-                                    className="h-full bg-gradient-to-r from-courses via-primary to-live-classes rounded-full transition-all"
-                                    style={{ width: `${overallProgress}%` }}
-                                  />
-                                </div>
-                                <span className="text-[10px] font-mono text-muted-foreground min-w-[32px]">
-                                  {Math.round(overallProgress)}%
-                                </span>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell className="font-mono text-sm">{user.userId}</TableCell>
-                          <TableCell className="text-sm">{user.role}</TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className={`text-xs ${getStatusColor(user.status)}`}>
-                              {user.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>{renderModuleStatus(user.modules.courses.completed, user.modules.courses.distributed)}</TableCell>
-                          <TableCell>{renderModuleStatus(user.modules.assessments.completed, user.modules.assessments.distributed)}</TableCell>
-                          <TableCell>{renderModuleStatus(user.modules.surveys.completed, user.modules.surveys.distributed)}</TableCell>
-                          <TableCell>{renderModuleStatus(user.modules.learningJourneys.completed, user.modules.learningJourneys.distributed)}</TableCell>
-                          <TableCell>{renderModuleStatus(user.modules.ilts.completed, user.modules.ilts.distributed)}</TableCell>
-                          <TableCell>{renderModuleStatus(user.modules.feeds.completed, user.modules.feeds.distributed)}</TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-            
-            {/* Fixed Action Column */}
-            <div className="border-l border-border bg-card shrink-0">
-              {/* Header */}
-              <div className="bg-secondary/50 h-[69px] flex items-end pb-3 px-4 border-b border-border">
-                <span className="font-semibold text-sm text-muted-foreground">Actions</span>
-              </div>
-              {/* Body */}
-              <div>
-                {sortedUsers.map((user, index) => (
-                  <div 
-                    key={user.id} 
-                    className="h-[97px] flex items-center px-4 border-b border-border hover:bg-secondary/30 cursor-pointer animate-slide-up"
+                <TableHead className="font-semibold min-w-[100px]">
+                  <div className="space-y-2">
+                    <span>User ID</span>
+                    <Input
+                      placeholder="Filter..."
+                      value={userIdSearch}
+                      onChange={(e) => setUserIdSearch(e.target.value)}
+                      className="h-7 text-xs bg-background/50 border-border"
+                    />
+                  </div>
+                </TableHead>
+
+                <TableHead className="font-semibold min-w-[160px]">
+                  <div className="space-y-2">
+                    <span>Role</span>
+                    <Select value={roleColumnFilter} onValueChange={setRoleColumnFilter}>
+                      <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
+                        <SelectValue placeholder="All Roles" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Roles</SelectItem>
+                        {uniqueRoles.map((role) => (
+                          <SelectItem key={role} value={role}>
+                            {role}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </TableHead>
+
+                <TableHead className="font-semibold min-w-[120px]">
+                  <div className="space-y-2">
+                    <span>Status</span>
+                    <Select value={statusColumnFilter} onValueChange={setStatusColumnFilter}>
+                      <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
+                        <SelectValue placeholder="All" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="Active">Active</SelectItem>
+                        <SelectItem value="Hired">Hired</SelectItem>
+                        <SelectItem value="Inactive">Inactive</SelectItem>
+                        <SelectItem value="Terminated">Terminated</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </TableHead>
+
+                <TableHead className="font-semibold whitespace-nowrap text-center">Courses</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap text-center">Assessments</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap text-center">Surveys</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap text-center">Playlists</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap text-center">Live Classes</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap text-center">Feeds</TableHead>
+
+                <TableHead className="font-semibold whitespace-nowrap sticky right-0 bg-secondary/50 border-l border-border z-20 min-w-[160px] w-[160px]">
+                  <div className="space-y-2">
+                    <span>Actions</span>
+                    <div className="h-7" />
+                  </div>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {sortedUsers.map((user, index) => {
+                const totalCompleted = Object.values(user.modules).reduce((acc, m) => acc + m.completed, 0);
+                const totalDistributed = Object.values(user.modules).reduce((acc, m) => acc + m.distributed, 0);
+                const overallProgress = totalDistributed > 0 ? (totalCompleted / totalDistributed) * 100 : 0;
+
+                return (
+                  <TableRow
+                    key={user.id}
+                    className="group hover:bg-secondary/30 cursor-pointer animate-slide-up"
                     style={{ animationDelay: `${Math.min(index * 20, 200)}ms` }}
                     onClick={() => handleRowClick(user.id)}
                   >
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="gap-1.5 whitespace-nowrap"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRowClick(user.id);
-                      }}
-                    >
-                      <ExternalLink className="h-3.5 w-3.5" />
-                      View Details
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+                    <TableCell>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shrink-0">
+                            <span className="text-xs font-semibold text-primary">
+                              {user.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .toUpperCase()}
+                            </span>
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <span className="font-medium text-sm truncate">{user.name}</span>
+                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                              <Phone className="h-2.5 w-2.5 shrink-0" />
+                              <span className="truncate">{user.phone}</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                              <Mail className="h-2.5 w-2.5 shrink-0" />
+                              <span className="truncate">{user.email}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-gradient-to-r from-courses via-primary to-live-classes rounded-full transition-all"
+                              style={{ width: `${overallProgress}%` }}
+                            />
+                          </div>
+                          <span className="text-[10px] font-mono text-muted-foreground min-w-[32px]">
+                            {Math.round(overallProgress)}%
+                          </span>
+                        </div>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="font-mono text-sm">{user.userId}</TableCell>
+                    <TableCell className="text-sm">{user.role}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={`text-xs ${getStatusColor(user.status)}`}>
+                        {user.status}
+                      </Badge>
+                    </TableCell>
+
+                    <TableCell>
+                      {renderModuleStatus(user.modules.courses.completed, user.modules.courses.distributed)}
+                    </TableCell>
+                    <TableCell>
+                      {renderModuleStatus(user.modules.assessments.completed, user.modules.assessments.distributed)}
+                    </TableCell>
+                    <TableCell>
+                      {renderModuleStatus(user.modules.surveys.completed, user.modules.surveys.distributed)}
+                    </TableCell>
+                    <TableCell>
+                      {renderModuleStatus(
+                        user.modules.learningJourneys.completed,
+                        user.modules.learningJourneys.distributed
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {renderModuleStatus(user.modules.ilts.completed, user.modules.ilts.distributed)}
+                    </TableCell>
+                    <TableCell>
+                      {renderModuleStatus(user.modules.feeds.completed, user.modules.feeds.distributed)}
+                    </TableCell>
+
+                    <TableCell className="sticky right-0 bg-card group-hover:bg-secondary/30 border-l border-border z-20 min-w-[160px] w-[160px]">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5 whitespace-nowrap"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRowClick(user.id);
+                        }}
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        View Details
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         </div>
       </main>
     </div>
