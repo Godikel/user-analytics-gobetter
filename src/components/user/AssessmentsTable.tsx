@@ -313,7 +313,7 @@ export function AssessmentsTable() {
                     </Select>
                   </div>
                 </TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Review</TableHead>
+                
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -392,12 +392,7 @@ export function AssessmentsTable() {
                     </Badge>
                   </TableCell>
                   <TableCell className="font-mono text-xs">{assessment.version}</TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm" className="h-7 text-xs gap-1">
-                      <FileText className="h-3 w-3" />
-                      Review
-                    </Button>
-                  </TableCell>
+                  
                 </TableRow>
               ))}
             </TableBody>
