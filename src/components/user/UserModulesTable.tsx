@@ -19,6 +19,7 @@ interface Module {
   trainer: string;
   coins: number;
   feedbackRating: number | null;
+  feedbackComment: string | null;
   distributionType: "Independent" | "Automatic";
   version: string;
   autoDistributionGroup: string | null;
@@ -35,6 +36,17 @@ const generateDateTime = (): string => {
 };
 
 import { moduleStats } from "@/data/moduleData";
+
+const feedbackComments = [
+  "Great content, very informative!",
+  "Could use more practical examples.",
+  "Excellent trainer, learned a lot.",
+  "Well structured and engaging.",
+  "Very helpful for my role.",
+  "Good overview of the topic.",
+  "Needs more interactive elements.",
+  "Perfect pace and delivery.",
+];
 
 const generateModulesForType = (type: Module["type"], total: number, completed: number): Module[] => {
   const names = [
@@ -63,6 +75,7 @@ const generateModulesForType = (type: Module["type"], total: number, completed: 
       trainer: trainers[i % trainers.length],
       coins: Math.floor(Math.random() * 100) + 10,
       feedbackRating: status === "Completed" ? Math.floor(Math.random() * 5) + 1 : null,
+      feedbackComment: status === "Completed" ? feedbackComments[i % feedbackComments.length] : null,
       distributionType: isAutomatic ? "Automatic" : "Independent",
       version: `v${Math.floor(Math.random() * 3) + 1}.${Math.floor(Math.random() * 10)}`,
       autoDistributionGroup: isAutomatic ? autoDistGroups[i % autoDistGroups.length] : null,
@@ -334,6 +347,7 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                 </TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Coins</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Rating</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap min-w-[180px]">Feedback</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Edit</TableHead>
               </TableRow>
             </TableHeader>
@@ -392,6 +406,9 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
                     ) : (
                       <span className="text-muted-foreground text-xs">-</span>
                     )}
+                  </TableCell>
+                  <TableCell className="text-xs text-muted-foreground max-w-[180px] truncate" title={module.feedbackComment || ""}>
+                    {module.feedbackComment || "-"}
                   </TableCell>
                   <TableCell>
                     <Button variant="ghost" size="sm" className="h-7 text-xs gap-1">
