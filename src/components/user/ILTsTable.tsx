@@ -19,6 +19,7 @@ interface ILT {
   classStartDateTime: string;
   classEndDateTime: string;
   trainer: string;
+  altTrainer: string | null;
   totalTime: number; // in minutes
   attendedTime: number; // in minutes
   feedback: string | null;
@@ -45,6 +46,7 @@ const generateILTs = (): ILT[] => {
   const types = ["Classroom", "Virtual", "Hybrid", "On-site"];
   const subTypes = ["Workshop", "Seminar", "Bootcamp", "Webinar", "Conference", "Training Session"];
   const trainers = ["John Smith", "Sarah Wilson", "Mike Chen", "Lisa Kumar", "David Park"];
+  const altTrainers = ["Emily Brown", "James Lee", "Anna Garcia", "Robert Taylor", null];
   const feedbackOptions = [
     "Great session, very informative",
     "Excellent trainer, learned a lot",
@@ -70,6 +72,7 @@ const generateILTs = (): ILT[] => {
       classStartDateTime: generateDateTime(),
       classEndDateTime: generateDateTime(),
       trainer: trainers[i % trainers.length],
+      altTrainer: altTrainers[i % altTrainers.length],
       totalTime,
       attendedTime: Math.round(attendedTime),
       feedback: isAttended ? feedbackOptions[Math.floor(Math.random() * feedbackOptions.length)] : null,
@@ -239,6 +242,7 @@ export function ILTsTable() {
                   </div>
                 </TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Trainer</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Alt Trainer</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Time Attended</TableHead>
                 <TableHead className="font-semibold min-w-[120px]">
                   <div className="space-y-2">
@@ -277,6 +281,7 @@ export function ILTsTable() {
                   <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{ilt.classStartDateTime}</TableCell>
                   <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{ilt.classEndDateTime}</TableCell>
                   <TableCell className="text-sm whitespace-nowrap">{ilt.trainer}</TableCell>
+                  <TableCell className="text-sm whitespace-nowrap text-muted-foreground">{ilt.altTrainer || "-"}</TableCell>
                   <TableCell className="font-mono text-xs whitespace-nowrap">
                     {ilt.attendanceStatus === "Attended" ? (
                       <span className={cn(
