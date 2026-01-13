@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { BookOpen, ClipboardCheck, MessageSquare, Route, Video, Newspaper } from "lucide-react";
+import { BookOpen, ClipboardCheck, MessageSquare, Route, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getModuleStatsForUser, ModuleStats } from "@/data/moduleData";
 
@@ -13,14 +13,13 @@ const moduleConfig = [
   { key: "surveys", tabValue: "surveys", label: "Surveys", icon: MessageSquare, colorClass: "text-surveys border-surveys/30 bg-surveys/10" },
   { key: "learningJourneys", tabValue: "journeys", label: "Learning Journeys", icon: Route, colorClass: "text-journeys border-journeys/30 bg-journeys/10" },
   { key: "ilts", tabValue: "ilts", label: "ILTs", icon: Video, colorClass: "text-live-classes border-live-classes/30 bg-live-classes/10" },
-  { key: "feeds", tabValue: "feeds", label: "Feeds", icon: Newspaper, colorClass: "text-feeds border-feeds/30 bg-feeds/10" },
 ];
 
 export function ModuleStatsGrid({ onModuleClick }: ModuleStatsGridProps) {
   const modules = getModuleStatsForUser();
   
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 animate-slide-up" style={{ animationDelay: "100ms" }}>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 animate-slide-up" style={{ animationDelay: "100ms" }}>
       {moduleConfig.map((config) => {
         const module = modules[config.key as keyof typeof modules];
         const percentage = module.distributed > 0 
