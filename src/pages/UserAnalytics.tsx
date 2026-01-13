@@ -10,7 +10,7 @@ import { PlaylistModulesTable } from "@/components/user/PlaylistModulesTable";
 import { ILTsTable } from "@/components/user/ILTsTable";
 import { getUserById } from "@/data/users";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, RefreshCw, Settings } from "lucide-react";
+import { ArrowLeft, RefreshCw, UserCog } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const UserAnalytics = () => {
@@ -61,16 +61,10 @@ const UserAnalytics = () => {
                 Last updated: Just now
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="gap-2">
-                <RefreshCw className="h-4 w-4" />
-                Refresh
-              </Button>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Settings className="h-4 w-4" />
-                User Attributes
-              </Button>
-            </div>
+            <Button variant="outline" size="sm" className="gap-2">
+              <UserCog className="h-4 w-4" />
+              User Attributes
+            </Button>
           </div>
 
           {/* User Profile Header */}
@@ -81,15 +75,20 @@ const UserAnalytics = () => {
 
           {/* Tabs for Different Views */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="animate-slide-up" style={{ animationDelay: "150ms" }} ref={tabsRef}>
-            <TabsList className="bg-secondary/50 border border-border">
-              <TabsTrigger value="modules">All Modules</TabsTrigger>
-              <TabsTrigger value="courses">Courses</TabsTrigger>
-              <TabsTrigger value="assessments">Assessments</TabsTrigger>
-              <TabsTrigger value="surveys">Surveys</TabsTrigger>
-              <TabsTrigger value="journeys">Learning Journeys</TabsTrigger>
-              <TabsTrigger value="ilts">ILTs</TabsTrigger>
-              
-            </TabsList>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <TabsList className="bg-secondary/50 border border-border">
+                <TabsTrigger value="modules">All Modules</TabsTrigger>
+                <TabsTrigger value="courses">Courses</TabsTrigger>
+                <TabsTrigger value="assessments">Assessments</TabsTrigger>
+                <TabsTrigger value="surveys">Surveys</TabsTrigger>
+                <TabsTrigger value="journeys">Learning Journeys</TabsTrigger>
+                <TabsTrigger value="ilts">ILTs</TabsTrigger>
+              </TabsList>
+              <Button variant="outline" size="sm" className="gap-2">
+                <RefreshCw className="h-4 w-4" />
+                Refresh
+              </Button>
+            </div>
 
             <TabsContent value="modules" className="mt-6">
               <UserModulesTable showTypeColumn={true} title="All Modules" />
