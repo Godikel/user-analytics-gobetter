@@ -184,7 +184,7 @@ const UserManagement = () => {
         {/* Users Table with Horizontal Scroll + Sticky Actions Column */}
         <div className="rounded-lg border border-border bg-card relative">
           {/* Table component already provides horizontal scrolling via its wrapper */}
-          <Table className="min-w-[1320px]">
+          <Table className="min-w-[1200px]">
             <TableHeader>
               <TableRow className="bg-secondary/50 hover:bg-secondary/50">
                 <TableHead className="font-semibold min-w-[220px]">
@@ -256,7 +256,6 @@ const UserManagement = () => {
                 <TableHead className="font-semibold whitespace-nowrap text-center">Surveys</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-center">Playlists</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-center">Live Classes</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap text-center">Feeds</TableHead>
 
                 <TableHead className="font-semibold whitespace-nowrap sticky right-0 bg-secondary border-l border-border z-20 min-w-[160px] w-[160px] shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]">
                   <div className="space-y-2">
@@ -343,9 +342,6 @@ const UserManagement = () => {
                     </TableCell>
                     <TableCell>
                       {renderModuleStatus(user.modules.ilts.completed, user.modules.ilts.distributed)}
-                    </TableCell>
-                    <TableCell>
-                      {renderModuleStatus(user.modules.feeds.completed, user.modules.feeds.distributed)}
                     </TableCell>
 
                     <TableCell className="sticky right-0 bg-card group-hover:bg-muted border-l border-border z-20 min-w-[160px] w-[160px] shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]">
