@@ -14,6 +14,7 @@ interface ILT {
   name: string;
   type: string;
   subType: string;
+  mode: "Online" | "Offline";
   distributionDate: string;
   attendanceStatus: "Attended" | "Not Attended";
   classStartDateTime: string;
@@ -56,6 +57,7 @@ const generateILTs = (): ILT[] => {
     null
   ];
   const enforcedOptions: ILT["enforced"][] = ["No", "Hard", "Soft"];
+  const modeOptions: ILT["mode"][] = ["Online", "Offline"];
 
   return Array.from({ length: total }, (_, i) => {
     const isAttended = i < completed;
@@ -67,6 +69,7 @@ const generateILTs = (): ILT[] => {
       name: names[i % names.length],
       type: types[i % types.length],
       subType: subTypes[i % subTypes.length],
+      mode: modeOptions[i % modeOptions.length],
       distributionDate: generateDateTime(),
       attendanceStatus: isAttended ? "Attended" : "Not Attended",
       classStartDateTime: generateDateTime(),
@@ -193,6 +196,7 @@ export function ILTsTable() {
                 </TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Type</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Sub-type</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Mode</TableHead>
                 <TableHead className="font-semibold min-w-[140px]">
                   <div className="space-y-2">
                     <span>Status</span>
@@ -272,6 +276,16 @@ export function ILTsTable() {
                   <TableCell className="font-medium">{ilt.name}</TableCell>
                   <TableCell className="text-sm whitespace-nowrap">{ilt.type}</TableCell>
                   <TableCell className="text-sm whitespace-nowrap">{ilt.subType}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className={cn(
+                      "text-xs whitespace-nowrap",
+                      ilt.mode === "Online" 
+                        ? "bg-journeys/20 text-journeys border-journeys/30" 
+                        : "bg-courses/20 text-courses border-courses/30"
+                    )}>
+                      {ilt.mode}
+                    </Badge>
+                  </TableCell>
                   <TableCell>
                     <Badge variant="outline" className={cn("text-xs whitespace-nowrap", getStatusColor(ilt.attendanceStatus))}>
                       {ilt.attendanceStatus}
