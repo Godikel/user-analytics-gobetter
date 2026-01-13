@@ -16,8 +16,8 @@ interface ILT {
   subType: string;
   distributionDate: string;
   attendanceStatus: "Attended" | "Not Attended";
-  startDate: string;
-  completionDate: string;
+  classStartDateTime: string;
+  classEndDateTime: string;
   trainer: string;
   totalTime: number; // in minutes
   attendedTime: number; // in minutes
@@ -67,8 +67,8 @@ const generateILTs = (): ILT[] => {
       subType: subTypes[i % subTypes.length],
       distributionDate: generateDateTime(),
       attendanceStatus: isAttended ? "Attended" : "Not Attended",
-      startDate: isAttended ? generateDateTime() : "-",
-      completionDate: isAttended ? generateDateTime() : "-",
+      classStartDateTime: generateDateTime(),
+      classEndDateTime: generateDateTime(),
       trainer: trainers[i % trainers.length],
       totalTime,
       attendedTime: Math.round(attendedTime),
@@ -81,7 +81,7 @@ const generateILTs = (): ILT[] => {
 
 const ilts = generateILTs();
 
-type SortColumn = "distributionDate" | "startDate" | "completionDate" | null;
+type SortColumn = "distributionDate" | "classStartDateTime" | "classEndDateTime" | null;
 type SortDirection = "asc" | "desc";
 
 const getStatusColor = (status: ILT["attendanceStatus"]) => {
@@ -218,22 +218,22 @@ export function ILTsTable() {
                 </TableHead>
                 <TableHead 
                   className="font-semibold whitespace-nowrap cursor-pointer hover:bg-secondary/70 transition-colors"
-                  onClick={() => handleSort("startDate")}
+                  onClick={() => handleSort("classStartDateTime")}
                 >
                   <div className="flex items-center gap-1">
-                    Start
-                    {sortColumn === "startDate" && (
+                    Class Start
+                    {sortColumn === "classStartDateTime" && (
                       sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
                     )}
                   </div>
                 </TableHead>
                 <TableHead 
                   className="font-semibold whitespace-nowrap cursor-pointer hover:bg-secondary/70 transition-colors"
-                  onClick={() => handleSort("completionDate")}
+                  onClick={() => handleSort("classEndDateTime")}
                 >
                   <div className="flex items-center gap-1">
-                    Completion
-                    {sortColumn === "completionDate" && (
+                    Class End
+                    {sortColumn === "classEndDateTime" && (
                       sortDirection === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
                     )}
                   </div>
@@ -274,8 +274,8 @@ export function ILTsTable() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{ilt.distributionDate}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{ilt.startDate}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{ilt.completionDate}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{ilt.classStartDateTime}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{ilt.classEndDateTime}</TableCell>
                   <TableCell className="text-sm whitespace-nowrap">{ilt.trainer}</TableCell>
                   <TableCell className="font-mono text-xs whitespace-nowrap">
                     {ilt.attendanceStatus === "Attended" ? (
