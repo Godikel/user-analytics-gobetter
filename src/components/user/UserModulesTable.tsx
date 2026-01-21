@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Download, ArrowUp, ArrowDown, ExternalLink, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import * as XLSX from "xlsx";
 
 interface Module {
   id: string;
@@ -195,11 +196,34 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
     }
   };
 
+  const downloadExcel = () => {
+    const data = sortedModules.map(m => ({
+      "ID": m.id,
+      "Name": m.name,
+      ...(showTypeColumn ? { "Type": m.type } : {}),
+      "Status": m.completionStatus,
+      "Distribution Date": m.distributionDate,
+      "Start Date": m.startDate,
+      "Completion Date": m.completionDate,
+      "Trainer": m.trainer,
+      ...(!hideDistributionTypeAndVersion ? { "Distribution Type": m.distributionType, "Version": m.version } : {}),
+      "Enforced": m.enforced,
+      "Coins": m.coins,
+      "Rating": m.feedbackRating || "-",
+      "Feedback": m.feedbackComment || "",
+    }));
+    
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, title);
+    XLSX.writeFile(workbook, `${title.toLowerCase().replace(/\s+/g, '_')}_export.xlsx`);
+  };
+
   return (
     <Card variant="elevated" className="animate-slide-up" style={{ animationDelay: "200ms" }}>
       <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <CardTitle className="text-lg">{title}</CardTitle>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="sm" className="gap-2" onClick={downloadExcel}>
           <Download className="h-4 w-4" />
           Export
         </Button>
