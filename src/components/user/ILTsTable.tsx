@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Search, Download, ArrowUp, ArrowDown, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { moduleStats } from "@/data/moduleData";
+import * as XLSX from "xlsx";
 
 interface ILT {
   id: string;
@@ -165,13 +166,38 @@ export function ILTsTable() {
     return `${mins}m`;
   };
 
+  const handleExport = () => {
+    const data = sortedILTs.map(ilt => ({
+      "ILT ID": ilt.id,
+      "Name": ilt.name,
+      "Type": ilt.type,
+      "Sub-type": ilt.subType,
+      "Mode": ilt.mode,
+      "Status": ilt.attendanceStatus,
+      "Distribution": ilt.distributionDate,
+      "Class Start": ilt.classStartDateTime,
+      "Class End": ilt.classEndDateTime,
+      "Trainer": ilt.trainer,
+      "Alt Trainer": ilt.altTrainer || "-",
+      "Time Attended": ilt.attendanceStatus === "Attended" ? `${formatTime(ilt.attendedTime)} / ${formatTime(ilt.totalTime)}` : "-",
+      "Enforced": ilt.enforced,
+      "Feedback Rating": ilt.feedbackRating ? `${ilt.feedbackRating}/5` : "-",
+      "Feedback": ilt.feedback ?? "-",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "ILTs");
+    XLSX.writeFile(workbook, "ilts_export.xlsx");
+  };
+
   return (
     <Card className="border shadow-sm">
       <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b bg-muted/30 py-3">
         <CardTitle className="text-base font-medium">ILTs</CardTitle>
-        <Button variant="link" size="sm" className="gap-2 text-primary">
+        <Button variant="outline" size="sm" className="gap-2" onClick={handleExport}>
           <Download className="h-4 w-4" />
-          Download user report
+          Export
         </Button>
       </CardHeader>
       <CardContent className="p-0">

@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Download, ArrowUp, ArrowDown, ExternalLink, Users, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
+import * as XLSX from "xlsx";
 
 interface Assessment {
   id: string;
@@ -161,23 +162,31 @@ export function AssessmentsTable() {
   });
 
   const handleExport = () => {
-    const headers = ["Assessment ID", "Name", "Status", "Distribution Date", "Start Date", "Completion Date", "Rank", "Time Taken", "Score", "Exp Points", "Feedback Rating", "Feedback Comments", "Questions", "Participants", "Mandatory", "Tags", "Enforced", "Distribution Type", "Auto-dist Group", "Version"];
-    const csvContent = [
-      headers.join(","),
-      ...sortedAssessments.map(a => [
-        a.id, `"${a.name}"`, a.completionStatus, a.distributionDate, a.startDate, a.completionDate,
-        a.rank ?? "-", a.timeTaken ?? "-", a.score ?? "-", a.expPoints, a.feedbackRating ?? "-",
-        `"${a.feedbackComments ?? "-"}"`, a.numberOfQuestions, a.participants, a.mandatory,
-        `"${a.tags.join(", ")}"`, a.enforced, a.distributionType, a.autoDistributionGroup ?? "-", a.version
-      ].join(","))
-    ].join("\n");
+    const data = sortedAssessments.map(a => ({
+      "Assessment ID": a.id,
+      "Name": a.name,
+      "Status": a.completionStatus,
+      "Distribution": a.distributionDate,
+      "Completion": a.completionDate,
+      "Rank": a.rank ?? "-",
+      "Time Taken": a.timeTaken ?? "-",
+      "Score": a.score ?? "-",
+      "Exp Points": a.expPoints,
+      "Rating": a.feedbackRating ?? "-",
+      "Feedback": a.feedbackComments ?? "-",
+      "Questions": a.numberOfQuestions,
+      "Participants": a.participants,
+      "Mandatory": a.mandatory,
+      "Tags": a.tags.join("; "),
+      "Enforced": a.enforced,
+      "Distribution Type": a.distributionType,
+      "Version": a.version,
+    }));
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "assessments_export.csv";
-    link.click();
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Assessments");
+    XLSX.writeFile(workbook, "assessments_export.xlsx");
   };
 
   return (
