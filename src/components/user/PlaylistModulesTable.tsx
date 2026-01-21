@@ -28,6 +28,8 @@ interface Playlist {
   assessmentsCount: number;
   surveysCount: number;
   distributionDate: string;
+  startDate: string;
+  completionDate: string;
   status: "Completed" | "Ongoing" | "Not Started";
   items: PlaylistItem[];
   enforced: "No" | "Hard" | "Soft";
@@ -130,6 +132,8 @@ const generatePlaylists = (): Playlist[] => {
       assessmentsCount,
       surveysCount,
       distributionDate: generateDateTime(),
+      startDate: status !== "Not Started" ? generateDateTime() : "-",
+      completionDate: status === "Completed" ? generateDateTime() : "-",
       status,
       items: generatePlaylistItems(coursesCount, assessmentsCount, surveysCount, status),
       enforced: enforcedOptions[i % enforcedOptions.length],
@@ -237,13 +241,15 @@ export function PlaylistModulesTable() {
         "Assessments": p.assessmentsCount,
         "Surveys": p.surveysCount,
         "Distribution": p.distributionDate,
+        "Start Date": p.startDate,
+        "Completion Date": p.completionDate,
         "Status": p.status,
         "Enforced": p.enforced,
         "Module ID": "",
         "Module Name": "",
         "Module Type": "",
         "Module Status": "",
-        "Completion Date": "",
+        "Module Completion Date": "",
       });
       
       // Add module rows
@@ -256,13 +262,15 @@ export function PlaylistModulesTable() {
           "Assessments": "",
           "Surveys": "",
           "Distribution": "",
+          "Start Date": "",
+          "Completion Date": "",
           "Status": "",
           "Enforced": "",
           "Module ID": item.id,
           "Module Name": item.name,
           "Module Type": item.type,
           "Module Status": item.status,
-          "Completion Date": item.completionDate,
+          "Module Completion Date": item.completionDate,
         });
       });
     });
@@ -318,6 +326,8 @@ export function PlaylistModulesTable() {
                     )}
                   </div>
                 </TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Start Date</TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Completion Date</TableHead>
                 <TableHead className="font-semibold min-w-[140px]">
                   <div className="space-y-2">
                     <span>Status</span>
@@ -376,6 +386,8 @@ export function PlaylistModulesTable() {
                       <TableCell className="text-center font-mono">{playlist.assessmentsCount}</TableCell>
                       <TableCell className="text-center font-mono">{playlist.surveysCount}</TableCell>
                       <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{playlist.distributionDate}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{playlist.startDate}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{playlist.completionDate}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className={cn("text-xs whitespace-nowrap", getStatusColor(playlist.status))}>
                           {playlist.status}
@@ -402,7 +414,7 @@ export function PlaylistModulesTable() {
                     </TableRow>
                     <CollapsibleContent asChild>
                       <TableRow className="bg-secondary/20 hover:bg-secondary/30">
-                        <TableCell colSpan={12} className="p-0">
+                        <TableCell colSpan={14} className="p-0">
                           <div className="px-8 py-4">
                             <h4 className="text-sm font-medium mb-3 text-muted-foreground">Playlist Contents</h4>
                             <div className="rounded-md border border-border overflow-hidden">
