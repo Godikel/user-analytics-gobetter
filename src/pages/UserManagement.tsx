@@ -4,7 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { users } from "@/data/users";
@@ -78,30 +78,6 @@ const UserManagement = () => {
     }
   };
 
-  const getProgressColor = (completed: number, distributed: number) => {
-    const percentage = distributed > 0 ? (completed / distributed) * 100 : 0;
-    if (percentage >= 80) return "bg-live-classes";
-    if (percentage >= 50) return "bg-journeys";
-    if (percentage >= 25) return "bg-assessments";
-    return "bg-muted-foreground";
-  };
-
-  const renderModuleStatus = (completed: number, distributed: number) => {
-    const percentage = distributed > 0 ? (completed / distributed) * 100 : 0;
-    return (
-      <div className="flex flex-col gap-1 min-w-[80px]">
-        <div className="flex items-center justify-between text-xs">
-          <span className="font-mono">{completed}/{distributed}</span>
-          <span className="text-muted-foreground">{Math.round(percentage)}%</span>
-        </div>
-        <Progress 
-          value={percentage} 
-          className="h-1.5" 
-          indicatorClassName={getProgressColor(completed, distributed)}
-        />
-      </div>
-    );
-  };
 
   const handleRowClick = (userId: string) => {
     navigate(`/users/${userId}`);
@@ -251,11 +227,6 @@ const UserManagement = () => {
                   </div>
                 </TableHead>
 
-                <TableHead className="font-semibold whitespace-nowrap text-center">Courses</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap text-center">Assessments</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap text-center">Surveys</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap text-center">Playlists</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap text-center">Live Classes</TableHead>
 
                 <TableHead className="font-semibold whitespace-nowrap sticky right-0 bg-secondary border-l border-border z-20 min-w-[160px] w-[160px] shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]">
                   <div className="space-y-2">
@@ -267,12 +238,7 @@ const UserManagement = () => {
             </TableHeader>
 
             <TableBody>
-              {sortedUsers.map((user, index) => {
-                const totalCompleted = Object.values(user.modules).reduce((acc, m) => acc + m.completed, 0);
-                const totalDistributed = Object.values(user.modules).reduce((acc, m) => acc + m.distributed, 0);
-                const overallProgress = totalDistributed > 0 ? (totalCompleted / totalDistributed) * 100 : 0;
-
-                return (
+              {sortedUsers.map((user, index) => (
                   <TableRow
                     key={user.id}
                     className="group hover:bg-secondary/30 cursor-pointer animate-slide-up"
@@ -280,39 +246,26 @@ const UserManagement = () => {
                     onClick={() => handleRowClick(user.id)}
                   >
                     <TableCell>
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shrink-0">
-                            <span className="text-xs font-semibold text-primary">
-                              {user.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")
-                                .toUpperCase()}
-                            </span>
-                          </div>
-                          <div className="flex flex-col min-w-0">
-                            <span className="font-medium text-sm truncate">{user.name}</span>
-                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                              <Phone className="h-2.5 w-2.5 shrink-0" />
-                              <span className="truncate">{user.phone}</span>
-                            </div>
-                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                              <Mail className="h-2.5 w-2.5 shrink-0" />
-                              <span className="truncate">{user.email}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-courses via-primary to-live-classes rounded-full transition-all"
-                              style={{ width: `${overallProgress}%` }}
-                            />
-                          </div>
-                          <span className="text-[10px] font-mono text-muted-foreground min-w-[32px]">
-                            {Math.round(overallProgress)}%
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shrink-0">
+                          <span className="text-xs font-semibold text-primary">
+                            {user.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()}
                           </span>
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="font-medium text-sm truncate">{user.name}</span>
+                          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                            <Phone className="h-2.5 w-2.5 shrink-0" />
+                            <span className="truncate">{user.phone}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                            <Mail className="h-2.5 w-2.5 shrink-0" />
+                            <span className="truncate">{user.email}</span>
+                          </div>
                         </div>
                       </div>
                     </TableCell>
@@ -323,25 +276,6 @@ const UserManagement = () => {
                       <Badge variant="outline" className={`text-xs ${getStatusColor(user.status)}`}>
                         {user.status}
                       </Badge>
-                    </TableCell>
-
-                    <TableCell>
-                      {renderModuleStatus(user.modules.courses.completed, user.modules.courses.distributed)}
-                    </TableCell>
-                    <TableCell>
-                      {renderModuleStatus(user.modules.assessments.completed, user.modules.assessments.distributed)}
-                    </TableCell>
-                    <TableCell>
-                      {renderModuleStatus(user.modules.surveys.completed, user.modules.surveys.distributed)}
-                    </TableCell>
-                    <TableCell>
-                      {renderModuleStatus(
-                        user.modules.learningJourneys.completed,
-                        user.modules.learningJourneys.distributed
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {renderModuleStatus(user.modules.ilts.completed, user.modules.ilts.distributed)}
                     </TableCell>
 
                     <TableCell className="sticky right-0 bg-card group-hover:bg-muted border-l border-border z-20 min-w-[160px] w-[160px] shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]">
@@ -359,8 +293,7 @@ const UserManagement = () => {
                       </Button>
                     </TableCell>
                   </TableRow>
-                );
-              })}
+                ))}
             </TableBody>
           </Table>
         </div>
