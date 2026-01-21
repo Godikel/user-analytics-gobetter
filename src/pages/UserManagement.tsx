@@ -16,13 +16,13 @@ const UserManagement = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [roleFilter, setRoleFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<SortOption>("alphabetical");
   
   // Column-specific filters
   const [nameSearch, setNameSearch] = useState("");
   const [userIdSearch, setUserIdSearch] = useState("");
-  const [roleColumnFilter, setRoleColumnFilter] = useState<string>("all");
+  const [genderFilter, setGenderFilter] = useState<string>("all");
+  const [cityFilter, setCityFilter] = useState<string>("all");
   const [statusColumnFilter, setStatusColumnFilter] = useState<string>("all");
 
   const filteredUsers = users.filter((user) => {
@@ -33,7 +33,6 @@ const UserManagement = () => {
       user.userId.includes(searchTerm);
     
     const matchesStatus = statusFilter === "all" || user.status === statusFilter;
-    const matchesRole = roleFilter === "all" || user.role === roleFilter;
     
     // Column filters
     const matchesNameSearch = nameSearch === "" || 
@@ -41,11 +40,12 @@ const UserManagement = () => {
       user.email.toLowerCase().includes(nameSearch.toLowerCase()) ||
       user.phone.includes(nameSearch);
     const matchesUserIdSearch = userIdSearch === "" || user.userId.includes(userIdSearch);
-    const matchesRoleColumn = roleColumnFilter === "all" || user.role === roleColumnFilter;
+    const matchesGender = genderFilter === "all" || user.gender === genderFilter;
+    const matchesCity = cityFilter === "all" || user.location === cityFilter;
     const matchesStatusColumn = statusColumnFilter === "all" || user.status === statusColumnFilter;
 
-    return matchesGlobalSearch && matchesStatus && matchesRole && 
-           matchesNameSearch && matchesUserIdSearch && matchesRoleColumn && matchesStatusColumn;
+    return matchesGlobalSearch && matchesStatus && 
+           matchesNameSearch && matchesUserIdSearch && matchesGender && matchesCity && matchesStatusColumn;
   });
 
   const sortedUsers = [...filteredUsers].sort((a, b) => {
@@ -66,7 +66,7 @@ const UserManagement = () => {
     }
   });
 
-  const uniqueRoles = [...new Set(users.map(u => u.role))];
+  const uniqueCities = [...new Set(users.map(u => u.location))];
 
 const getStatusColor = (status: string) => {
     switch (status) {
@@ -117,17 +117,6 @@ const getStatusColor = (status: string) => {
                 <SelectItem value="Hired">Hired</SelectItem>
                 <SelectItem value="Inactive">Inactive</SelectItem>
                 <SelectItem value="Terminated">Terminated</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-[200px] bg-card border-border">
-                <SelectValue placeholder="Role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                {uniqueRoles.map(role => (
-                  <SelectItem key={role} value={role}>{role}</SelectItem>
-                ))}
               </SelectContent>
             </Select>
             <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
@@ -190,18 +179,35 @@ const getStatusColor = (status: string) => {
                   </div>
                 </TableHead>
 
-                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider min-w-[160px]">
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider min-w-[100px]">
                   <div className="space-y-2">
-                    <span>Role</span>
-                    <Select value={roleColumnFilter} onValueChange={setRoleColumnFilter}>
+                    <span>Gender</span>
+                    <Select value={genderFilter} onValueChange={setGenderFilter}>
                       <SelectTrigger className="h-7 text-xs bg-background border-border rounded-sm">
-                        <SelectValue placeholder="All Roles" />
+                        <SelectValue placeholder="All" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All Roles</SelectItem>
-                        {uniqueRoles.map((role) => (
-                          <SelectItem key={role} value={role}>
-                            {role}
+                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="Male">Male</SelectItem>
+                        <SelectItem value="Female">Female</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </TableHead>
+
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider min-w-[140px]">
+                  <div className="space-y-2">
+                    <span>City</span>
+                    <Select value={cityFilter} onValueChange={setCityFilter}>
+                      <SelectTrigger className="h-7 text-xs bg-background border-border rounded-sm">
+                        <SelectValue placeholder="All Cities" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Cities</SelectItem>
+                        {uniqueCities.map((city) => (
+                          <SelectItem key={city} value={city}>
+                            {city}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -265,7 +271,8 @@ const getStatusColor = (status: string) => {
                     </TableCell>
 
                     <TableCell className="font-mono text-sm text-muted-foreground">{user.userId}</TableCell>
-                    <TableCell className="text-sm">{user.role}</TableCell>
+                    <TableCell className="text-sm">{user.gender}</TableCell>
+                    <TableCell className="text-sm">{user.location}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className={`text-xs font-normal ${getStatusColor(user.status)}`}>
                         {user.status}
