@@ -33,6 +33,7 @@ interface Playlist {
   status: "Completed" | "Ongoing" | "Not Started";
   items: PlaylistItem[];
   enforced: "No" | "Hard" | "Soft";
+  distributionType: "Manual" | "Automatic";
 }
 
 const generateDateTime = (): string => {
@@ -137,6 +138,7 @@ const generatePlaylists = (): Playlist[] => {
       status,
       items: generatePlaylistItems(coursesCount, assessmentsCount, surveysCount, status),
       enforced: enforcedOptions[i % enforcedOptions.length],
+      distributionType: i % 2 === 0 ? "Manual" : "Automatic",
     };
   });
 };
@@ -241,6 +243,7 @@ export function PlaylistModulesTable() {
         "Assessments": p.assessmentsCount,
         "Surveys": p.surveysCount,
         "Distribution": p.distributionDate,
+        "Distribution Type": p.distributionType,
         "Start Date": p.startDate,
         "Completion Date": p.completionDate,
         "Status": p.status,
@@ -262,6 +265,7 @@ export function PlaylistModulesTable() {
           "Assessments": "",
           "Surveys": "",
           "Distribution": "",
+          "Distribution Type": "",
           "Start Date": "",
           "Completion Date": "",
           "Status": "",
@@ -326,6 +330,7 @@ export function PlaylistModulesTable() {
                     )}
                   </div>
                 </TableHead>
+                <TableHead className="font-semibold whitespace-nowrap">Distribution Type</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Start Date</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Completion Date</TableHead>
                 <TableHead className="font-semibold min-w-[140px]">
@@ -386,6 +391,16 @@ export function PlaylistModulesTable() {
                       <TableCell className="text-center font-mono">{playlist.assessmentsCount}</TableCell>
                       <TableCell className="text-center font-mono">{playlist.surveysCount}</TableCell>
                       <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{playlist.distributionDate}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">
+                        <Badge variant="outline" className={cn(
+                          "text-xs",
+                          playlist.distributionType === "Automatic"
+                            ? "bg-courses/20 text-courses border-courses/30"
+                            : "bg-muted text-muted-foreground border-muted"
+                        )}>
+                          {playlist.distributionType}
+                        </Badge>
+                      </TableCell>
                       <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{playlist.startDate}</TableCell>
                       <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{playlist.completionDate}</TableCell>
                       <TableCell>
@@ -414,7 +429,7 @@ export function PlaylistModulesTable() {
                     </TableRow>
                     <CollapsibleContent asChild>
                       <TableRow className="bg-secondary/20 hover:bg-secondary/30">
-                        <TableCell colSpan={14} className="p-0">
+                        <TableCell colSpan={15} className="p-0">
                           <div className="px-8 py-4">
                             <h4 className="text-sm font-medium mb-3 text-muted-foreground">Playlist Contents</h4>
                             <div className="rounded-md border border-border overflow-hidden">
