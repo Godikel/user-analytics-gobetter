@@ -197,21 +197,26 @@ export function UserModulesTable({ showTypeColumn = true, title = "All Modules",
   };
 
   const downloadExcel = () => {
-    const data = sortedModules.map(m => ({
-      "ID": m.id,
-      "Name": m.name,
-      ...(showTypeColumn ? { "Type": m.type } : {}),
-      "Status": m.completionStatus,
-      "Distribution Date": m.distributionDate,
-      "Start Date": m.startDate,
-      "Completion Date": m.completionDate,
-      "Trainer": m.trainer,
-      ...(!hideDistributionTypeAndVersion ? { "Distribution Type": m.distributionType, "Version": m.version } : {}),
-      "Enforced": m.enforced,
-      "Coins": m.coins,
-      "Rating": m.feedbackRating || "-",
-      "Feedback": m.feedbackComment || "",
-    }));
+    const data = sortedModules.map(m => {
+      const row: Record<string, string | number> = {};
+      if (idColumnLabel) row[idColumnLabel] = m.id;
+      row["Name"] = m.name;
+      if (showTypeColumn) row["Type"] = m.type;
+      row["Status"] = m.completionStatus;
+      row["Distribution"] = m.distributionDate;
+      row["Start"] = m.startDate;
+      row["Completion"] = m.completionDate;
+      row["Trainer"] = m.trainer;
+      if (!hideDistributionTypeAndVersion) {
+        row["Distribution Type"] = m.distributionType;
+        row["Version"] = m.version;
+      }
+      row["Enforced"] = m.enforced;
+      row["Coins"] = m.coins;
+      row["Rating"] = m.feedbackRating || "-";
+      row["Feedback"] = m.feedbackComment || "";
+      return row;
+    });
     
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
