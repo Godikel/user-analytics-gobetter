@@ -1,4 +1,5 @@
 import { getModuleStatsForUser } from "@/data/moduleData";
+import { Progress } from "@/components/ui/progress";
 
 interface ModuleStatsGridProps {
   onModuleClick?: (tabValue: string) => void;
@@ -19,7 +20,6 @@ export function ModuleStatsGrid({ onModuleClick }: ModuleStatsGridProps) {
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
       {moduleConfig.map((config) => {
         const module = modules[config.key as keyof typeof modules];
-        
         const percentage = module.distributed > 0 
           ? Math.round((module.completed / module.distributed) * 100) 
           : 0;
@@ -33,7 +33,7 @@ export function ModuleStatsGrid({ onModuleClick }: ModuleStatsGridProps) {
             <div className="text-sm text-muted-foreground mb-2">
               {config.label}
             </div>
-            <div className="flex items-end justify-between">
+            <div className="flex items-end justify-between mb-2">
               <span className="text-2xl font-semibold text-foreground">
                 {module.completed}/{module.distributed}
               </span>
@@ -41,6 +41,7 @@ export function ModuleStatsGrid({ onModuleClick }: ModuleStatsGridProps) {
                 {percentage}%
               </span>
             </div>
+            <Progress value={percentage} className="h-1.5" />
           </div>
         );
       })}
