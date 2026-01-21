@@ -178,7 +178,6 @@ export function ILTsTable() {
       "Class Start": ilt.classStartDateTime,
       "Class End": ilt.classEndDateTime,
       "Trainer": ilt.trainer,
-      "Alt Trainer": ilt.altTrainer || "-",
       "Time Attended": ilt.attendanceStatus === "Attended" ? `${formatTime(ilt.attendedTime)} / ${formatTime(ilt.totalTime)}` : "-",
       "Enforced": ilt.enforced,
       "Feedback Rating": ilt.feedbackRating ? `${ilt.feedbackRating}/5` : "-",
@@ -272,7 +271,7 @@ export function ILTsTable() {
                   </div>
                 </TableHead>
                 <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap">Trainer</TableHead>
-                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap">Alt Trainer</TableHead>
+                
                 <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap">Time Attended</TableHead>
                 <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider min-w-[120px]">
                   <div className="space-y-2">
@@ -321,7 +320,7 @@ export function ILTsTable() {
                   <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{ilt.classStartDateTime}</TableCell>
                   <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{ilt.classEndDateTime}</TableCell>
                   <TableCell className="text-sm whitespace-nowrap">{ilt.trainer}</TableCell>
-                  <TableCell className="text-sm whitespace-nowrap text-muted-foreground">{ilt.altTrainer || "-"}</TableCell>
+                  
                   <TableCell className="font-mono text-xs whitespace-nowrap">
                     {ilt.attendanceStatus === "Attended" ? (
                       <span className={cn(
