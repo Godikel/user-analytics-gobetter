@@ -145,7 +145,6 @@ type SortDirection = "asc" | "desc";
 export function PlaylistModulesTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [stateFilter, setStateFilter] = useState<string>("all");
   const [enforcedFilter, setEnforcedFilter] = useState<string>("all");
   const [sortColumn, setSortColumn] = useState<SortColumn>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
@@ -193,9 +192,8 @@ export function PlaylistModulesTable() {
     const matchesSearch = playlist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       playlist.id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || playlist.status === statusFilter;
-    const matchesState = stateFilter === "all" || playlist.state === stateFilter;
     const matchesEnforced = enforcedFilter === "all" || playlist.enforced === enforcedFilter;
-    return matchesSearch && matchesStatus && matchesState && matchesEnforced;
+    return matchesSearch && matchesStatus && matchesEnforced;
   });
 
   const sortedPlaylists = [...filteredPlaylists].sort((a, b) => {
@@ -217,13 +215,6 @@ export function PlaylistModulesTable() {
     }
   };
 
-  const getStateColor = (state: Playlist["state"]) => {
-    switch (state) {
-      case "Published": return "bg-courses/20 text-courses border-courses/30";
-      case "Draft": return "bg-assessments/20 text-assessments border-assessments/30";
-      case "Archived": return "bg-muted text-muted-foreground border-muted";
-    }
-  };
 
   const getItemTypeIcon = (type: PlaylistItem["type"]) => {
     switch (type) {
@@ -242,7 +233,6 @@ export function PlaylistModulesTable() {
         "Playlist ID": p.id,
         "Name": p.name,
         "Language": p.language,
-        "State": p.state,
         "Courses": p.coursesCount,
         "Assessments": p.assessmentsCount,
         "Surveys": p.surveysCount,
@@ -262,7 +252,6 @@ export function PlaylistModulesTable() {
           "Playlist ID": p.id,
           "Name": "",
           "Language": "",
-          "State": "",
           "Courses": "",
           "Assessments": "",
           "Surveys": "",
@@ -315,22 +304,6 @@ export function PlaylistModulesTable() {
                   </div>
                 </TableHead>
                 <TableHead className="font-semibold whitespace-nowrap">Language</TableHead>
-                <TableHead className="font-semibold min-w-[120px]">
-                  <div className="space-y-2">
-                    <span>State</span>
-                    <Select value={stateFilter} onValueChange={setStateFilter}>
-                      <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
-                        <SelectValue placeholder="All States" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All States</SelectItem>
-                        <SelectItem value="Published">Published</SelectItem>
-                        <SelectItem value="Draft">Draft</SelectItem>
-                        <SelectItem value="Archived">Archived</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-center">Courses</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-center">Assessments</TableHead>
                 <TableHead className="font-semibold whitespace-nowrap text-center">Surveys</TableHead>
@@ -399,11 +372,6 @@ export function PlaylistModulesTable() {
                       <TableCell className="font-mono text-xs whitespace-nowrap">{playlist.id}</TableCell>
                       <TableCell className="font-medium">{playlist.name}</TableCell>
                       <TableCell className="text-sm whitespace-nowrap">{playlist.language}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className={cn("text-xs whitespace-nowrap", getStateColor(playlist.state))}>
-                          {playlist.state}
-                        </Badge>
-                      </TableCell>
                       <TableCell className="text-center font-mono">{playlist.coursesCount}</TableCell>
                       <TableCell className="text-center font-mono">{playlist.assessmentsCount}</TableCell>
                       <TableCell className="text-center font-mono">{playlist.surveysCount}</TableCell>
