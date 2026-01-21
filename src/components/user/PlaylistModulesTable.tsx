@@ -9,6 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Search, Download, ArrowUp, ArrowDown, ChevronDown, ChevronRight, BookOpen, ClipboardCheck, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { moduleStats } from "@/data/moduleData";
+import * as XLSX from "xlsx";
 
 interface PlaylistItem {
   id: string;
@@ -232,11 +233,31 @@ export function PlaylistModulesTable() {
     }
   };
 
+  const handleExport = () => {
+    const data = sortedPlaylists.map(p => ({
+      "Playlist ID": p.id,
+      "Name": p.name,
+      "Language": p.language,
+      "State": p.state,
+      "Courses": p.coursesCount,
+      "Assessments": p.assessmentsCount,
+      "Surveys": p.surveysCount,
+      "Distribution": p.distributionDate,
+      "Status": p.status,
+      "Enforced": p.enforced,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Playlists");
+    XLSX.writeFile(workbook, "playlists_export.xlsx");
+  };
+
   return (
     <Card variant="elevated" className="animate-slide-up" style={{ animationDelay: "200ms" }}>
       <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <CardTitle className="text-lg">Playlists / Learning Journeys</CardTitle>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="sm" className="gap-2" onClick={handleExport}>
           <Download className="h-4 w-4" />
           Export
         </Button>
