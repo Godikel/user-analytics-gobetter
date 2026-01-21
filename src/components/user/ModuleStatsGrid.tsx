@@ -20,6 +20,10 @@ export function ModuleStatsGrid({ onModuleClick }: ModuleStatsGridProps) {
       {moduleConfig.map((config) => {
         const module = modules[config.key as keyof typeof modules];
         
+        const percentage = module.distributed > 0 
+          ? Math.round((module.completed / module.distributed) * 100) 
+          : 0;
+        
         return (
           <div 
             key={config.key}
@@ -29,8 +33,13 @@ export function ModuleStatsGrid({ onModuleClick }: ModuleStatsGridProps) {
             <div className="text-sm text-muted-foreground mb-2">
               {config.label}
             </div>
-            <div className="text-2xl font-semibold text-foreground">
-              {module.completed}/{module.distributed}
+            <div className="flex items-end justify-between">
+              <span className="text-2xl font-semibold text-foreground">
+                {module.completed}/{module.distributed}
+              </span>
+              <span className="text-sm font-medium text-primary">
+                {percentage}%
+              </span>
             </div>
           </div>
         );
