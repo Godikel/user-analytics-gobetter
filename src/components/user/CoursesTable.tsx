@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Download, ArrowUp, ArrowDown, ExternalLink, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
+import * as XLSX from "xlsx";
 
 interface CardDetail {
   courseId: string;
@@ -130,17 +131,21 @@ type SortDirection = "asc" | "desc";
 function LevelDetailsDialog({ course }: { course: Course }) {
   const downloadExcel = (type: "learning" | "question") => {
     const cards = type === "learning" ? course.learningCards : course.questionCards;
-    const headers = ["Course ID", "Course Name", "Card ID", "Card Title", "Card Type", "View Date", "Duration (sec)", "Points Earned"];
-    const rows = cards.map(c => [c.courseId, c.courseName, c.cardId, c.cardTitle, c.cardType, c.viewDate, c.durationSeconds, c.pointsEarned]);
+    const data = cards.map(c => ({
+      "Course ID": c.courseId,
+      "Course Name": c.courseName,
+      "Card ID": c.cardId,
+      "Card Title": c.cardTitle,
+      "Card Type": c.cardType,
+      "View Date": c.viewDate,
+      "Duration (sec)": c.durationSeconds,
+      "Points Earned": c.pointsEarned,
+    }));
     
-    const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${course.id}_${type}_cards.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, `${type} Cards`);
+    XLSX.writeFile(workbook, `${course.id}_${type}_cards.xlsx`);
   };
 
   return (
@@ -334,21 +339,29 @@ export function CoursesTable() {
   };
 
   const downloadAllCourses = () => {
-    const headers = ["Course ID", "Course Name", "Status", "Distribution Date", "Completion Date", "Trainer", "Alt Trainer", "Mandatory", "Coins", "Rating", "Feedback", "Distribution Type", "Auto Group", "Tags", "Enforced", "Version"];
-    const rows = sortedCourses.map(c => [
-      c.id, c.name, c.completionStatus, c.distributionDate, c.completionDate, c.trainerName, c.alternateTrainer, 
-      c.mandatory, c.coins, c.feedbackRating || "-", c.feedbackComments, c.distributionType, c.autoDistributionGroup,
-      c.tags.join("; "), c.enforced, c.version
-    ]);
+    const data = sortedCourses.map(c => ({
+      "Course ID": c.id,
+      "Course Name": c.name,
+      "Status": c.completionStatus,
+      "Distribution Date": c.distributionDate,
+      "Completion Date": c.completionDate,
+      "Trainer": c.trainerName,
+      "Alt Trainer": c.alternateTrainer,
+      "Mandatory": c.mandatory,
+      "Coins": c.coins,
+      "Rating": c.feedbackRating || "-",
+      "Feedback": c.feedbackComments,
+      "Distribution Type": c.distributionType,
+      "Auto Group": c.autoDistributionGroup,
+      "Tags": c.tags.join("; "),
+      "Enforced": c.enforced,
+      "Version": c.version,
+    }));
     
-    const csvContent = [headers.join(","), ...rows.map(r => r.map(cell => `"${cell}"`).join(","))].join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "courses_export.csv";
-    a.click();
-    URL.revokeObjectURL(url);
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Courses");
+    XLSX.writeFile(workbook, "courses_export.xlsx");
   };
 
   return (
