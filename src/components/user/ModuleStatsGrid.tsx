@@ -24,7 +24,7 @@ export function ModuleStatsGrid({ onModuleClick }: ModuleStatsGridProps) {
           <div 
             key={config.key}
             onClick={() => onModuleClick?.(config.tabValue)}
-            className="bg-muted/50 rounded-md p-4 cursor-pointer hover:bg-muted/70 transition-colors"
+            className="bg-primary/5 rounded-md p-4 cursor-pointer hover:bg-primary/10 transition-colors border border-primary/10"
           >
             <div className="text-sm text-muted-foreground mb-2">
               {config.label}
