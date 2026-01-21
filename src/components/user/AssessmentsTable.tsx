@@ -100,17 +100,17 @@ type SortDirection = "asc" | "desc";
 
 const getStatusColor = (status: Assessment["completionStatus"]) => {
   switch (status) {
-    case "Completed": return "bg-courses/20 text-courses border-courses/30";
-    case "Ongoing": return "bg-journeys/20 text-journeys border-journeys/30";
-    case "Not Started": return "bg-muted text-muted-foreground border-muted";
+    case "Completed": return "bg-success/10 text-success border-success/20";
+    case "Ongoing": return "bg-warning/10 text-warning border-warning/20";
+    case "Not Started": return "bg-muted text-muted-foreground border-border";
   }
 };
 
 const getEnforcedColor = (enforced: Assessment["enforced"]) => {
   switch (enforced) {
-    case "Hard": return "bg-destructive/20 text-destructive border-destructive/30";
-    case "Soft": return "bg-journeys/20 text-journeys border-journeys/30";
-    case "No": return "bg-muted text-muted-foreground border-muted";
+    case "Hard": return "bg-destructive/10 text-destructive border-destructive/20";
+    case "Soft": return "bg-warning/10 text-warning border-warning/20";
+    case "No": return "bg-muted text-muted-foreground border-border";
   }
 };
 

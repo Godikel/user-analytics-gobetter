@@ -319,17 +319,17 @@ export function CoursesTable() {
 
   const getStatusColor = (status: Course["completionStatus"]) => {
     switch (status) {
-      case "Completed": return "bg-live-classes/20 text-live-classes border-live-classes/30";
-      case "Ongoing": return "bg-journeys/20 text-journeys border-journeys/30";
-      case "Not Started": return "bg-muted text-muted-foreground border-muted";
+      case "Completed": return "bg-success/10 text-success border-success/20";
+      case "Ongoing": return "bg-warning/10 text-warning border-warning/20";
+      case "Not Started": return "bg-muted text-muted-foreground border-border";
     }
   };
 
   const getEnforcedColor = (enforced: Course["enforced"]) => {
     switch (enforced) {
-      case "Hard": return "bg-destructive/20 text-destructive border-destructive/30";
-      case "Soft": return "bg-journeys/20 text-journeys border-journeys/30";
-      case "No": return "bg-muted text-muted-foreground border-muted";
+      case "Hard": return "bg-destructive/10 text-destructive border-destructive/20";
+      case "Soft": return "bg-warning/10 text-warning border-warning/20";
+      case "No": return "bg-muted text-muted-foreground border-border";
     }
   };
 
@@ -352,21 +352,21 @@ export function CoursesTable() {
   };
 
   return (
-    <Card variant="elevated" className="animate-slide-up" style={{ animationDelay: "200ms" }}>
-      <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <CardTitle className="text-lg">Courses</CardTitle>
-        <Button variant="outline" size="sm" className="gap-2" onClick={downloadAllCourses}>
+    <Card className="border shadow-sm">
+      <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b bg-muted/30 py-3">
+        <CardTitle className="text-base font-medium">Courses</CardTitle>
+        <Button variant="link" size="sm" className="gap-2 text-primary" onClick={downloadAllCourses}>
           <Download className="h-4 w-4" />
-          Export
+          Download user report
         </Button>
       </CardHeader>
-      <CardContent>
-        <div className="rounded-lg border border-border overflow-x-auto">
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
           <Table className="min-w-[2000px]">
             <TableHeader>
-              <TableRow className="bg-secondary/50 hover:bg-secondary/50">
+              <TableRow className="bg-muted/30 hover:bg-muted/30 border-b">
                 {/* Course ID - Search */}
-                <TableHead className="font-semibold min-w-[120px]">
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider min-w-[120px]">
                   <div className="space-y-2">
                     <span>Course ID</span>
                     <div className="relative">
@@ -375,7 +375,7 @@ export function CoursesTable() {
                         placeholder="Search..."
                         value={courseIdSearch}
                         onChange={(e) => setCourseIdSearch(e.target.value)}
-                        className="pl-7 h-7 text-xs bg-background/50 border-border"
+                        className="pl-7 h-7 text-xs bg-background border-border rounded-sm"
                       />
                     </div>
                   </div>

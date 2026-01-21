@@ -92,8 +92,8 @@ type SortDirection = "asc" | "desc";
 
 const getStatusColor = (status: ILT["attendanceStatus"]) => {
   switch (status) {
-    case "Attended": return "bg-live-classes/20 text-live-classes border-live-classes/30";
-    case "Not Attended": return "bg-muted text-muted-foreground border-muted";
+    case "Attended": return "bg-success/10 text-success border-success/20";
+    case "Not Attended": return "bg-muted text-muted-foreground border-border";
   }
 };
 
@@ -166,21 +166,21 @@ export function ILTsTable() {
   };
 
   return (
-    <Card variant="elevated" className="animate-slide-up" style={{ animationDelay: "200ms" }}>
-      <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <CardTitle className="text-lg">ILTs</CardTitle>
-        <Button variant="outline" size="sm" className="gap-2">
+    <Card className="border shadow-sm">
+      <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b bg-muted/30 py-3">
+        <CardTitle className="text-base font-medium">ILTs</CardTitle>
+        <Button variant="link" size="sm" className="gap-2 text-primary">
           <Download className="h-4 w-4" />
-          Export
+          Download user report
         </Button>
       </CardHeader>
-      <CardContent>
-        <div className="rounded-lg border border-border overflow-x-auto">
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
           <Table className="min-w-[1100px]">
             <TableHeader>
-              <TableRow className="bg-secondary/50 hover:bg-secondary/50">
-                <TableHead className="font-semibold whitespace-nowrap">ILT ID</TableHead>
-                <TableHead className="font-semibold min-w-[200px]">
+              <TableRow className="bg-muted/30 hover:bg-muted/30 border-b">
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap">ILT ID</TableHead>
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider min-w-[200px]">
                   <div className="space-y-2">
                     <span>Name</span>
                     <div className="relative">
@@ -189,19 +189,19 @@ export function ILTsTable() {
                         placeholder="Search..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-7 h-7 text-xs bg-background/50 border-border"
+                        className="pl-7 h-7 text-xs bg-background border-border rounded-sm"
                       />
                     </div>
                   </div>
                 </TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Type</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Sub-type</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Mode</TableHead>
-                <TableHead className="font-semibold min-w-[140px]">
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap">Type</TableHead>
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap">Sub-type</TableHead>
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap">Mode</TableHead>
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider min-w-[140px]">
                   <div className="space-y-2">
                     <span>Status</span>
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
+                      <SelectTrigger className="h-7 text-xs bg-background border-border rounded-sm">
                         <SelectValue placeholder="All Status" />
                       </SelectTrigger>
                       <SelectContent>
@@ -213,7 +213,7 @@ export function ILTsTable() {
                   </div>
                 </TableHead>
                 <TableHead 
-                  className="font-semibold whitespace-nowrap cursor-pointer hover:bg-secondary/70 transition-colors"
+                  className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap cursor-pointer hover:bg-muted/50 transition-colors"
                   onClick={() => handleSort("distributionDate")}
                 >
                   <div className="flex items-center gap-1">
@@ -224,7 +224,7 @@ export function ILTsTable() {
                   </div>
                 </TableHead>
                 <TableHead 
-                  className="font-semibold whitespace-nowrap cursor-pointer hover:bg-secondary/70 transition-colors"
+                  className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap cursor-pointer hover:bg-muted/50 transition-colors"
                   onClick={() => handleSort("classStartDateTime")}
                 >
                   <div className="flex items-center gap-1">
@@ -235,7 +235,7 @@ export function ILTsTable() {
                   </div>
                 </TableHead>
                 <TableHead 
-                  className="font-semibold whitespace-nowrap cursor-pointer hover:bg-secondary/70 transition-colors"
+                  className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap cursor-pointer hover:bg-muted/50 transition-colors"
                   onClick={() => handleSort("classEndDateTime")}
                 >
                   <div className="flex items-center gap-1">
@@ -245,14 +245,14 @@ export function ILTsTable() {
                     )}
                   </div>
                 </TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Trainer</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Alt Trainer</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Time Attended</TableHead>
-                <TableHead className="font-semibold min-w-[120px]">
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap">Trainer</TableHead>
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap">Alt Trainer</TableHead>
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap">Time Attended</TableHead>
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider min-w-[120px]">
                   <div className="space-y-2">
                     <span>Enforced</span>
                     <Select value={enforcedFilter} onValueChange={setEnforcedFilter}>
-                      <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
+                      <SelectTrigger className="h-7 text-xs bg-background border-border rounded-sm">
                         <SelectValue placeholder="All" />
                       </SelectTrigger>
                       <SelectContent>
@@ -264,30 +264,30 @@ export function ILTsTable() {
                     </Select>
                   </div>
                 </TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Feedback Rating</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap min-w-[200px]">Feedback</TableHead>
-                <TableHead className="font-semibold whitespace-nowrap">Action</TableHead>
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap">Feedback Rating</TableHead>
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap min-w-[200px]">Feedback</TableHead>
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {sortedILTs.map((ilt) => (
-                <TableRow key={ilt.id} className="hover:bg-secondary/30">
-                  <TableCell className="font-mono text-xs whitespace-nowrap">{ilt.id}</TableCell>
+                <TableRow key={ilt.id} className="hover:bg-muted/50 border-b">
+                  <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">{ilt.id}</TableCell>
                   <TableCell className="font-medium">{ilt.name}</TableCell>
                   <TableCell className="text-sm whitespace-nowrap">{ilt.type}</TableCell>
                   <TableCell className="text-sm whitespace-nowrap">{ilt.subType}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className={cn(
-                      "text-xs whitespace-nowrap",
+                      "text-xs font-normal whitespace-nowrap",
                       ilt.mode === "Online" 
-                        ? "bg-journeys/20 text-journeys border-journeys/30" 
-                        : "bg-courses/20 text-courses border-courses/30"
+                        ? "bg-primary/10 text-primary border-primary/20" 
+                        : "bg-muted text-muted-foreground border-border"
                     )}>
                       {ilt.mode}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline" className={cn("text-xs whitespace-nowrap", getStatusColor(ilt.attendanceStatus))}>
+                    <Badge variant="outline" className={cn("text-xs font-normal whitespace-nowrap", getStatusColor(ilt.attendanceStatus))}>
                       {ilt.attendanceStatus}
                     </Badge>
                   </TableCell>
@@ -299,7 +299,7 @@ export function ILTsTable() {
                   <TableCell className="font-mono text-xs whitespace-nowrap">
                     {ilt.attendanceStatus === "Attended" ? (
                       <span className={cn(
-                        ilt.attendedTime / ilt.totalTime >= 0.8 ? "text-live-classes" : "text-journeys"
+                        ilt.attendedTime / ilt.totalTime >= 0.8 ? "text-success" : "text-warning"
                       )}>
                         {formatTime(ilt.attendedTime)} / {formatTime(ilt.totalTime)}
                       </span>
@@ -309,12 +309,12 @@ export function ILTsTable() {
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className={cn(
-                      "text-xs whitespace-nowrap",
+                      "text-xs font-normal whitespace-nowrap",
                       ilt.enforced === "Hard" 
-                        ? "bg-destructive/20 text-destructive border-destructive/30" 
+                        ? "bg-destructive/10 text-destructive border-destructive/20" 
                         : ilt.enforced === "Soft"
-                        ? "bg-journeys/20 text-journeys border-journeys/30"
-                        : "bg-muted text-muted-foreground border-muted"
+                        ? "bg-warning/10 text-warning border-warning/20"
+                        : "bg-muted text-muted-foreground border-border"
                     )}>
                       {ilt.enforced}
                     </Badge>
@@ -330,7 +330,7 @@ export function ILTsTable() {
                     {ilt.feedback ?? "-"}
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="sm" className="h-7 text-xs gap-1">
+                    <Button variant="link" size="sm" className="h-7 text-xs gap-1 p-0 text-primary">
                       <ExternalLink className="h-3 w-3" />
                       Go to Module
                     </Button>
@@ -340,7 +340,7 @@ export function ILTsTable() {
             </TableBody>
           </Table>
         </div>
-        <div className="mt-4 text-sm text-muted-foreground">
+        <div className="p-4 text-sm text-muted-foreground border-t">
           Showing {filteredILTs.length} of {ilts.length} ILTs
         </div>
       </CardContent>

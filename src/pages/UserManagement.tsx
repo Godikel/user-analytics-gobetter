@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { users } from "@/data/users";
-import { Search, Users, ArrowDownAZ, CalendarPlus, ExternalLink, Phone, Mail } from "lucide-react";
+import { Search, Users, ArrowDownAZ, CalendarPlus, ExternalLink, Mail } from "lucide-react";
 
 type SortOption = "alphabetical" | "latest";
 
@@ -68,12 +68,12 @@ const UserManagement = () => {
 
   const uniqueRoles = [...new Set(users.map(u => u.role))];
 
-  const getStatusColor = (status: string) => {
+const getStatusColor = (status: string) => {
     switch (status) {
-      case "Active": return "bg-live-classes/20 text-live-classes border-live-classes/30";
-      case "Hired": return "bg-courses/20 text-courses border-courses/30";
-      case "Inactive": return "bg-muted text-muted-foreground border-muted";
-      case "Terminated": return "bg-destructive/20 text-destructive border-destructive/30";
+      case "Active": return "bg-success/10 text-success border-success/20";
+      case "Hired": return "bg-primary/10 text-primary border-primary/20";
+      case "Inactive": return "bg-muted text-muted-foreground border-border";
+      case "Terminated": return "bg-destructive/10 text-destructive border-destructive/20";
       default: return "";
     }
   };
@@ -162,8 +162,8 @@ const UserManagement = () => {
           {/* Table component already provides horizontal scrolling via its wrapper */}
           <Table className="min-w-[1200px]">
             <TableHeader>
-              <TableRow className="bg-secondary/50 hover:bg-secondary/50">
-                <TableHead className="font-semibold min-w-[220px]">
+              <TableRow className="bg-muted/30 hover:bg-muted/30 border-b">
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider min-w-[220px]">
                   <div className="space-y-2">
                     <span>User</span>
                     <div className="relative">
@@ -172,29 +172,29 @@ const UserManagement = () => {
                         placeholder="Search..."
                         value={nameSearch}
                         onChange={(e) => setNameSearch(e.target.value)}
-                        className="pl-7 h-7 text-xs bg-background/50 border-border"
+                        className="pl-7 h-7 text-xs bg-background border-border rounded-sm"
                       />
                     </div>
                   </div>
                 </TableHead>
 
-                <TableHead className="font-semibold min-w-[100px]">
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider min-w-[100px]">
                   <div className="space-y-2">
                     <span>User ID</span>
                     <Input
                       placeholder="Filter..."
                       value={userIdSearch}
                       onChange={(e) => setUserIdSearch(e.target.value)}
-                      className="h-7 text-xs bg-background/50 border-border"
+                      className="h-7 text-xs bg-background border-border rounded-sm"
                     />
                   </div>
                 </TableHead>
 
-                <TableHead className="font-semibold min-w-[160px]">
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider min-w-[160px]">
                   <div className="space-y-2">
                     <span>Role</span>
                     <Select value={roleColumnFilter} onValueChange={setRoleColumnFilter}>
-                      <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
+                      <SelectTrigger className="h-7 text-xs bg-background border-border rounded-sm">
                         <SelectValue placeholder="All Roles" />
                       </SelectTrigger>
                       <SelectContent>
@@ -209,11 +209,11 @@ const UserManagement = () => {
                   </div>
                 </TableHead>
 
-                <TableHead className="font-semibold min-w-[120px]">
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider min-w-[120px]">
                   <div className="space-y-2">
                     <span>Status</span>
                     <Select value={statusColumnFilter} onValueChange={setStatusColumnFilter}>
-                      <SelectTrigger className="h-7 text-xs bg-background/50 border-border">
+                      <SelectTrigger className="h-7 text-xs bg-background border-border rounded-sm">
                         <SelectValue placeholder="All" />
                       </SelectTrigger>
                       <SelectContent>
@@ -227,8 +227,7 @@ const UserManagement = () => {
                   </div>
                 </TableHead>
 
-
-                <TableHead className="font-semibold whitespace-nowrap sticky right-0 bg-secondary border-l border-border z-20 min-w-[160px] w-[160px] shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]">
+                <TableHead className="font-medium text-xs uppercase text-muted-foreground tracking-wider whitespace-nowrap sticky right-0 bg-muted/30 border-l border-border z-20 min-w-[160px] w-[160px]">
                   <div className="space-y-2">
                     <span>Actions</span>
                     <div className="h-7" />
@@ -238,17 +237,16 @@ const UserManagement = () => {
             </TableHeader>
 
             <TableBody>
-              {sortedUsers.map((user, index) => (
+              {sortedUsers.map((user) => (
                   <TableRow
                     key={user.id}
-                    className="group hover:bg-secondary/30 cursor-pointer animate-slide-up"
-                    style={{ animationDelay: `${Math.min(index * 20, 200)}ms` }}
+                    className="group hover:bg-muted/50 cursor-pointer border-b"
                     onClick={() => handleRowClick(user.id)}
                   >
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shrink-0">
-                          <span className="text-xs font-semibold text-primary">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                          <span className="text-xs font-medium text-primary">
                             {user.name
                               .split(" ")
                               .map((n) => n[0])
@@ -257,32 +255,28 @@ const UserManagement = () => {
                           </span>
                         </div>
                         <div className="flex flex-col min-w-0">
-                          <span className="font-medium text-sm truncate">{user.name}</span>
-                          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                            <Phone className="h-2.5 w-2.5 shrink-0" />
-                            <span className="truncate">{user.phone}</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                            <Mail className="h-2.5 w-2.5 shrink-0" />
+                          <span className="font-medium text-sm text-foreground">{user.name}</span>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <Mail className="h-3 w-3 shrink-0" />
                             <span className="truncate">{user.email}</span>
                           </div>
                         </div>
                       </div>
                     </TableCell>
 
-                    <TableCell className="font-mono text-sm">{user.userId}</TableCell>
+                    <TableCell className="font-mono text-sm text-muted-foreground">{user.userId}</TableCell>
                     <TableCell className="text-sm">{user.role}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={`text-xs ${getStatusColor(user.status)}`}>
+                      <Badge variant="outline" className={`text-xs font-normal ${getStatusColor(user.status)}`}>
                         {user.status}
                       </Badge>
                     </TableCell>
 
-                    <TableCell className="sticky right-0 bg-card group-hover:bg-muted border-l border-border z-20 min-w-[160px] w-[160px] shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]">
+                    <TableCell className="sticky right-0 bg-background group-hover:bg-muted/50 border-l border-border z-20 min-w-[160px] w-[160px]">
                       <Button
-                        variant="outline"
+                        variant="link"
                         size="sm"
-                        className="gap-1.5 whitespace-nowrap"
+                        className="gap-1.5 text-primary p-0 h-auto"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleRowClick(user.id);
