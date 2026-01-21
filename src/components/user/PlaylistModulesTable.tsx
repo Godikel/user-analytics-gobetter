@@ -234,18 +234,49 @@ export function PlaylistModulesTable() {
   };
 
   const handleExport = () => {
-    const data = sortedPlaylists.map(p => ({
-      "Playlist ID": p.id,
-      "Name": p.name,
-      "Language": p.language,
-      "State": p.state,
-      "Courses": p.coursesCount,
-      "Assessments": p.assessmentsCount,
-      "Surveys": p.surveysCount,
-      "Distribution": p.distributionDate,
-      "Status": p.status,
-      "Enforced": p.enforced,
-    }));
+    const data: Record<string, string | number>[] = [];
+    
+    sortedPlaylists.forEach(p => {
+      // Add playlist row
+      data.push({
+        "Playlist ID": p.id,
+        "Name": p.name,
+        "Language": p.language,
+        "State": p.state,
+        "Courses": p.coursesCount,
+        "Assessments": p.assessmentsCount,
+        "Surveys": p.surveysCount,
+        "Distribution": p.distributionDate,
+        "Status": p.status,
+        "Enforced": p.enforced,
+        "Module ID": "",
+        "Module Name": "",
+        "Module Type": "",
+        "Module Status": "",
+        "Completion Date": "",
+      });
+      
+      // Add module rows
+      p.items.forEach(item => {
+        data.push({
+          "Playlist ID": p.id,
+          "Name": "",
+          "Language": "",
+          "State": "",
+          "Courses": "",
+          "Assessments": "",
+          "Surveys": "",
+          "Distribution": "",
+          "Status": "",
+          "Enforced": "",
+          "Module ID": item.id,
+          "Module Name": item.name,
+          "Module Type": item.type,
+          "Module Status": item.status,
+          "Completion Date": item.completionDate,
+        });
+      });
+    });
 
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
